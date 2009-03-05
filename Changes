@@ -1,0 +1,22 @@
+Revision history for Perl extension Sys::Info::Driver::Windows.
+
+Time zone is GMT+2.
+
+0.69_01 Thu Mar  5 03:18:38 2009
+    => Separation from Sys::Info.
+    => Integrated Sys::Info::Driver::Windows::XS into Sys::Info::Driver::Windows.
+
+Revision history for Perl extension Sys::Info::Driver::Windows::XS
+(before integration into Sys::Info::Driver::Windows)
+
+0.21 Tue Jul  8 21:00:59 2008
+    => Increase distro kwalitee.
+
+0.20 Sun Jun 15 22:37:33 2008
+    => Implemented an interface to GetSystemInfo().
+
+0.11 Sun Jun  8 22:10:54 2008
+    => Forgot README & Changes to include in distro.
+
+0.10 Tue May 27 22:22:40 2008
+    => First public release.
