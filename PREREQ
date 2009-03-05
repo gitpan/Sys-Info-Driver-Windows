@@ -3,11 +3,12 @@ use strict;
 use vars qw(%PREREQ %RECOMMEND);
 
 %PREREQ = (
-   'IO::File'           => 0,
-   'Test::More'         => '0.40',
-   'Sys::Info::Base'    => '0.69_01',
-   'ExtUtils::CBuilder' => 0,
-   'Win32::OLE'         => 0,
+   'IO::File'                   => 0,
+   'Test::More'                 => '0.40',
+   'Sys::Info::Base'            => '0.69_01',
+   'Sys::Info::Driver::Unknown' => '0.69_01',
+   'ExtUtils::CBuilder'         => 0,
+   'Win32::OLE'                 => 0,
 );
 
 1;
