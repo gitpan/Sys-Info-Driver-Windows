@@ -10,6 +10,7 @@
 
 typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 
 MODULE = Sys::Info::Driver::Windows  PACKAGE = Sys::Info::Driver::Windows
 
@@ -27,15 +28,24 @@ GetSystemInfo()
 PREINIT:
     OSVERSIONINFOEX osvi;
     SYSTEM_INFO     si;
+    SYSTEM_INFO     si2;
     PGNSI           pGNSI;
+    LPFN_ISWOW64PROCESS fnIsWow64Process;
     //PGPI            pGPI;
     BOOL            bOsVersionInfoEx;
+    BOOL            bIsWow;
     //DWORD           dwType;
     TCHAR           wProcessorModel         [10];
     TCHAR           wProcessorStepping      [10];
     TCHAR           wProcessorArchitecture2 [64];
+    unsigned int    process_bitness;
+    unsigned int    cpu_bitness;
 PPCODE:
-    /* See: http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx */
+    /*
+        See:
+        - http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx
+        - http://blogs.msdn.com/junfeng/archive/2005/07/01/434574.aspx
+    */
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
     if( !(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) )
@@ -47,6 +57,10 @@ PPCODE:
                         "GetNativeSystemInfo"
                     );
 
+    process_bitness = 0;
+    cpu_bitness     = 0;
+    bIsWow = FALSE;
+
     (NULL != pGNSI) ? pGNSI(&si) : GetSystemInfo(&si);
 
     if ( VER_PLATFORM_WIN32_NT == osvi.dwPlatformId && osvi.dwMajorVersion > 4 ) {
@@ -54,28 +68,66 @@ PPCODE:
         EXTEND(SP, 26);
 
         switch (si.wProcessorArchitecture) {
-            case PROCESSOR_ARCHITECTURE_INTEL:
-                lstrcpy(  wProcessorArchitecture2, TEXT("x86") );
-                wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
-                wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
-                break;
-
             case PROCESSOR_ARCHITECTURE_ALPHA: 
                 lstrcpy(  wProcessorArchitecture2, TEXT("Alpha"));
                 wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
                 wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
+                process_bitness = 64;
+                cpu_bitness     = 64;
                 break;
 
             case PROCESSOR_ARCHITECTURE_IA64:
                 lstrcpy(  wProcessorArchitecture2, TEXT("IA-64"));
                 wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
                 wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
+                process_bitness = 64;
+                cpu_bitness     = 64;
                 break;
 
             case PROCESSOR_ARCHITECTURE_ALPHA64:
                 lstrcpy(wProcessorArchitecture2  , TEXT("Alpha64"));
                 wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
                 wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
+                process_bitness = 64;
+                cpu_bitness     = 64;
+                break;
+
+            case PROCESSOR_ARCHITECTURE_INTEL:
+                lstrcpy(  wProcessorArchitecture2, TEXT("x86") );
+                wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
+                wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
+
+                fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
+                    GetModuleHandle( TEXT("kernel32.dll") ), 
+                    "IsWow64Process"
+                );
+
+                if ( NULL != fnIsWow64Process ) {
+                    if ( ! fnIsWow64Process(GetCurrentProcess(), &bIsWow) ){
+                        croak("IsWow64Process failed with last error %d.", GetLastError());
+                    } else {
+                        if (bIsWow) {
+                            pGNSI(&si2);
+                            if (si2.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64) {
+                                process_bitness = 32;
+                                cpu_bitness     = 64;
+                                //printf("32 bit process on IA64");
+                            } else if (si2.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64) {
+                                process_bitness = 32;
+                                cpu_bitness     = 64;
+                                //printf("32 bit process on AMD64");
+                            } else {
+                                //printf("I am running in the future!");
+                            }
+                        } else {
+                            cpu_bitness     = (si.wProcessorLevel == 6 && si.wProcessorRevision >= 14)
+                                            ? 64 // Core2
+                                            : 32;
+                            process_bitness = 32;
+                        }
+                    }
+                }
+
                 break;
 
             case PROCESSOR_ARCHITECTURE_UNKNOWN:
@@ -129,8 +181,15 @@ PPCODE:
         PUSHs( sv_2mortal( newSVpv( "lpMaximumApplicationAddress"  , 0 ) ) );
         PUSHs( sv_2mortal( newSVuv( si.lpMaximumApplicationAddress     ) ) );
 
+
+        PUSHs( sv_2mortal( newSVpv( "process_bitness"  , 0 ) ) );
+        PUSHs( sv_2mortal( newSViv( process_bitness     ) ) );
+
+        PUSHs( sv_2mortal( newSVpv( "cpu_bitness"  , 0 ) ) );
+        PUSHs( sv_2mortal( newSViv( cpu_bitness     ) ) );
+
     }
     else {
-        printf( "GetSystemInfo() can not be run on this version of Windows.\n");
+        croak( "GetSystemInfo() can not be run on this version of Windows.");
         //XSRETURN(0);
     }

@@ -2,6 +2,9 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
+0.69_03 Fri Mar  6 05:52:57 2009
+    => Experimental support to detect the bitness of CPU & OS.
+
 0.69_02 Thu Mar  5 04:07:56 2009
     => Add Sys::Info::Driver::Unknown to PREREQ
 

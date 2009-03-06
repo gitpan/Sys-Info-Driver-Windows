@@ -1,6 +1,6 @@
 ---
 name: Sys-Info-Driver-Windows
-version: 0.69_02
+version: 0.69_03
 author:
   - 'Burak Gursoy <burak@cpan.org>'
 abstract: Windows driver for Sys::Info
@@ -17,7 +17,7 @@ requires:
 provides:
   Sys::Info::Driver::Windows:
     file: lib/Sys/Info/Driver/Windows.pm
-    version: 0.69_02
+    version: 0.69_03
   Sys::Info::Driver::Windows::Device:
     file: lib/Sys/Info/Driver/Windows/Device.pm
     version: 0.69_01
@@ -36,7 +36,7 @@ provides:
   Sys::Info::Driver::Windows::OS::Net:
     file: lib/Sys/Info/Driver/Windows/OS/Net.pm
     version: 0.69_01
-generated_by: Module::Build version 0.31012
+generated_by: Module::Build version 0.32
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2
