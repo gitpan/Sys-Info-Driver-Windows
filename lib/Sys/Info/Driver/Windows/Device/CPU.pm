@@ -6,6 +6,7 @@ use base qw(
     Sys::Info::Driver::Windows::Device::CPU::WMI
 );
 use Sys::Info::Constants qw( :windows_reg );
+use Carp qw( croak );
 
 $VERSION = '0.69_01';
 
@@ -13,11 +14,12 @@ my $REG;
 TRY_TO_LOAD: {
     # SetDualVar req. in Win32::TieRegistry breaks any handler
     local $SIG{__DIE__};
+    local $@;
     eval {
         require Win32::TieRegistry;
         Win32::TieRegistry->import(Delimiter => '/');
     };
-    unless($@ || not defined $Registry->{+WIN_REG_HW_KEY}) {
+    if ( ! $@ && defined $Registry->{+WIN_REG_HW_KEY} ) {
         $REG = $Registry->{ +WIN_REG_CPU_KEY };
     }
 }
@@ -28,20 +30,18 @@ sub load {
     return $cpu[0]->{load};
 }
 
-# arabirim belirsiz. contexte göre veri döndür !!!
-# cpu_num adlý bir parametre al, buna göre cpu özellik döndür
-# veya properties() adlý bir metod ekle!!!
+# XXX: interface is unclear. return data based on context !!!
+# Take a parameter named cpu_num and return properties based on that
+# ... else: add a method named properties() !!!
 sub identify {
     my $self = shift;
-    return $self->_serve_from_cache(wantarray) if $self->{CACHE};
-
-    my @cpu; # try sequence: WMI -> Registry -> Environment
-    @cpu = $self->_fetch_from_wmi;
-    @cpu = $self->_fetch_from_reg     if !@cpu && $self->_registry_is_ok;
-    @cpu = $self->SUPER::identify(@_) if !@cpu;
-    die "Failed to identify CPU"      if !@cpu;
-    $self->{CACHE} = [@cpu];
-
+    if ( ! $self->{META_DATA} ) {
+        my @cache = $self->_from_wmi 
+                    or $self->_from_registry
+                    or $self->SUPER::identify(@_)
+                    or croak("Failed to identify CPU");
+        $self->{META_DATA} = [ @cache ];
+    }
     return $self->_serve_from_cache(wantarray);
 }
 
@@ -49,8 +49,9 @@ sub identify {
 
 # $REG->{'0/FeatureSet'}
 # $REG->{'0/Update Status'}
-sub _fetch_from_reg {
+sub _from_registry {
     my $self = shift;
+    return +() if not $self->_registry_is_ok;
     my(@cpu);
 
     foreach my $k (keys %{ $REG }) {
@@ -81,7 +82,7 @@ sub _registry_is_ok {
 }
 
 # may be called from ::Env
-sub __env_pi {
+sub __env_pi { # XXX: remove this thing
     my $self = shift;
     return if not $REG;
     return $REG->{'0/Identifier'}.', '.$REG->{'0/VendorIdentifier'};

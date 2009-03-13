@@ -1,6 +1,6 @@
 ---
 name: Sys-Info-Driver-Windows
-version: 0.69_03
+version: 0.69_04
 author:
   - 'Burak Gursoy <burak@cpan.org>'
 abstract: Windows driver for Sys::Info
@@ -17,7 +17,7 @@ requires:
 provides:
   Sys::Info::Driver::Windows:
     file: lib/Sys/Info/Driver/Windows.pm
-    version: 0.69_03
+    version: 0.69_04
   Sys::Info::Driver::Windows::Device:
     file: lib/Sys/Info/Driver/Windows/Device.pm
     version: 0.69_01
@@ -26,7 +26,7 @@ provides:
     version: 0.69_01
   Sys::Info::Driver::Windows::Device::CPU::WMI:
     file: lib/Sys/Info/Driver/Windows/Device/CPU/WMI.pm
-    version: 0.69_01
+    version: 0.69_03
   Sys::Info::Driver::Windows::OS:
     file: lib/Sys/Info/Driver/Windows/OS.pm
     version: 0.69_01

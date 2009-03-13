@@ -7,7 +7,7 @@ $VERSION = '0.69_01';
 use base qw( Sys::Info::Driver::Windows::OS::Editions );
 use Win32;
 use Win32::OLE qw( in );
-use Sys::Info::Driver::Windows qw( :WMI );
+use Sys::Info::Driver::Windows qw( :WMI :etc );
 use Sys::Info::Driver::Windows::OS::Net;
 use Carp qw( croak );
 BEGIN {
@@ -181,12 +181,19 @@ sub cdkey {
         foreach my $v ( sort { $b <=> $a } @versions ) {
             my $key = $base->{ $v . '/Registration' };
             my $id  = ( keys %{ $key } )[0];
-            push @list, decode_serial_key $key->{ $id . 'DigitalProductId' };
+            my $val = $key->{ $id . 'DigitalProductId' } || next;
+            push @list, decode_serial_key( $val );
         }
         return @list; #return all available keys
     }
 
-    return decode_serial_key( $Registry->{ +WIN_REG_CDKEY } );
+    my $val = $Registry->{ +WIN_REG_CDKEY } || return;
+    return decode_serial_key( $val );
+}
+
+sub bitness {
+    my $self = shift;
+    
 }
 
 # ------------------------[ P R I V A T E ]------------------------ #
@@ -243,28 +250,28 @@ sub _osversion_table {
     my $ID      = $OSV->{ID};
     my($os,$edition);
 
-       if ( $ID == 0 ) {        $os = 'Win32s'              }
+       if ( $ID == 0 ) { $os = 'Win32s' }
     elsif ( $ID == 1 ) {
-           if ( $t->(4,  0) ) { $os = 'Windows 95'          }
-        elsif ( $t->(4, 10) ) { $os = 'Windows 98'          }
-        elsif ( $t->(4, 90) ) { $os = 'Windows Me'          }
-        else                  { $os = "Windows 9x $version" }
+        $os = $t->(4,0 ) ? 'Windows 95'
+            : $t->(4,10) ? 'Windows 98'
+            : $t->(4,90) ? 'Windows Me'
+            :              "Windows 9x $version"
+            ;
     }
     elsif ( $ID == 2 ) {
-            $os = "Windows NT $version";
-           if ( $t->(3, 51) ) { $os = 'Windows NT 3.51'     }
-        elsif ( $t->(4,  0) ) { $os = 'Windows NT 4'        }
-        else {
+          $t->(3,51) ? do { $os = 'Windows NT 3.51' }
+        : $t->(4,0 ) ? do { $os = 'Windows NT 4'    }
+        : do {
             # damn editions!
-               if ( $t->(5,0) ) { $self->_2k_03_xp(    \$edition, \$os, $OSV ) }
-            elsif ( $t->(5,1) ) { $self->_xp_editions( \$edition, \$os, $OSV ) }
-            elsif ( $t->(5,2) ) { $self->_xp_or_03(    \$edition, \$os, $OSV ) }
-            elsif ( $t->(6,0) ) { $self->_vista_or_08( \$edition, \$os       ) }
-            else                { $os = "Windows NT $version" }
+              $t->(5,0) ? $self->_2k_03_xp(    \$edition, \$os, $OSV )
+            : $t->(5,1) ? $self->_xp_editions( \$edition, \$os, $OSV )
+            : $t->(5,2) ? $self->_xp_or_03(    \$edition, \$os, $OSV )
+            : $t->(6,0) ? $self->_vista_or_08( \$edition, \$os       )
+            :             do { $os = "Windows NT $version" }
         }
     }
     else {
-        $os = "Windows $version",
+        $os = "Windows $version";
     }
 
     return $os, $version, $edition;
@@ -279,8 +286,8 @@ sub _populate_osversion { # returns the object
     my %OSV;
     @OSV{ @OSV_NAMES } = Win32::GetOSVersion();
 
-    $OSV{MAJOR} = 0 if not defined $OSV{MAJOR};
-    $OSV{MINOR} = 0 if not defined $OSV{MINOR};
+    $OSV{MAJOR} ||= 0;
+    $OSV{MINOR} ||= 0;
 
     my($osname, $version, $edition) = $self->_osversion_table( \%OSV );
 
@@ -377,6 +384,8 @@ This document only discusses the driver specific parts.
 =head2 tz
 
 =head2 uptime
+
+=head2 bitness
 
 Please see L<Sys::Info::OS> for definitions of these methods and more.
 

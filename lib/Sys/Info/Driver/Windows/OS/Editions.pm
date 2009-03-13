@@ -205,7 +205,7 @@ sub _vista_or_08 {
             $$osname_ref  = 'Windows Server 2008'; # oh yeah!
         }
         else {
-            warn "Unable to identify this Windows version. Marking as Vista";
+            warn "Unable to identify this Windows version 6. Marking as Vista";
             $$osname_ref = 'Windows Vista';
         }
     }
@@ -232,6 +232,7 @@ system name and edition.
 
 =head1 SEE ALSO
 
+L<Win32>,
 L<Sys::Info>,
 L<Sys::Info::Driver::Windows>.
 
