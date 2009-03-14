@@ -1,7 +1,7 @@
 die "OS unsupported\n" if $^O !~ m{ \A MSWin }xmsi;
 
 use strict;
-use vars qw(%PREREQ %RECOMMEND);
+use vars qw(%PREREQ %RECOMMEND %BUILD_REQ);
 use Cwd;
 use Module::Build;
 
@@ -11,6 +11,7 @@ my $mb = Module::Build->new(
     module_name    => 'Sys::Info::Driver::Windows',
     license        => 'perl',
     requires       => \%PREREQ,
+    build_requires => \%BUILD_REQ,
     recommends     => \%RECOMMEND,
     sign           => 0,
     dist_author    => 'Burak Gursoy <burak@cpan.org>',
