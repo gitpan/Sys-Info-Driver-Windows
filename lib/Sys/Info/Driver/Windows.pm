@@ -14,7 +14,7 @@ use constant SM_SERVERR2    => 89; # Windows Server 2003 R2
 use Exporter ();
 use XSLoader;
 
-$VERSION = '0.69_06';
+$VERSION = '0.69_10';
 @ISA     = qw( Exporter );
 @EXPORT  = qw(  );
 %EXPORT_TAGS = (
@@ -168,7 +168,7 @@ Copyright 2006-2009 Burak Gürsoy. All rights reserved.
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.8.8 or, 
+it under the same terms as Perl itself, either Perl version 5.10.0 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut
