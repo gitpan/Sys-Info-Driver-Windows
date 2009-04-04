@@ -7,7 +7,7 @@ $VERSION = '0.69_10';
 use base qw( Sys::Info::Driver::Windows::OS::Editions );
 use Win32;
 use Win32::OLE qw( in );
-use Sys::Info::Driver::Windows qw( :WMI :etc );
+use Sys::Info::Driver::Windows qw( :all );
 use Sys::Info::Driver::Windows::OS::Net;
 use Carp qw( croak );
 BEGIN {
@@ -193,7 +193,8 @@ sub cdkey {
 
 sub bitness {
     my $self = shift;
-    
+    my %i    = GetSystemInfo();
+    return $i{wProcessBitness};
 }
 
 # ------------------------[ P R I V A T E ]------------------------ #

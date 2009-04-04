@@ -2,6 +2,9 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
+0.69_11 Sat Apr  4 06:04:21 2009
+    => Implement os->bitness cpu->bitness.
+
 0.69_10 Fri Apr  3 22:21:51 2009
     => Update test suite.
 

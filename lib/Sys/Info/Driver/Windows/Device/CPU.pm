@@ -6,6 +6,7 @@ use base qw(
     Sys::Info::Driver::Windows::Device::CPU::WMI
 );
 use Sys::Info::Constants qw( :windows_reg );
+use Sys::Info::Driver::Windows qw( :info );
 use Carp qw( croak );
 
 $VERSION = '0.69_10';
@@ -28,6 +29,12 @@ sub load {
     my $self = shift;
     my @cpu  = $self->identify;
     return $cpu[0]->{load};
+}
+
+sub bitness {
+    my $self = shift;
+    my %i    = GetSystemInfo();
+    return $i{wProcessorBitness};
 }
 
 # XXX: interface is unclear. return data based on context !!!
@@ -113,6 +120,10 @@ See identify in L<Sys::Info::Device::CPU>.
 =head2 load
 
 See load in L<Sys::Info::Device::CPU>.
+
+=head2 bitness
+
+See bitness in L<Sys::Info::Device::CPU>.
 
 =head1 SEE ALSO
 
