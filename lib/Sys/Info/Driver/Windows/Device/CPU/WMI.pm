@@ -5,7 +5,7 @@ use Win32::OLE qw (in);
 use Sys::Info::Driver::Windows qw(:WMI);
 use base qw( Sys::Info::Base );
 
-$VERSION = '0.69_10';
+$VERSION = '0.70';
 
 my $WMI_INFO = {
     CpuStatus => {

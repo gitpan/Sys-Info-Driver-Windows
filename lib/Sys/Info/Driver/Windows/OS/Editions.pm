@@ -4,7 +4,7 @@ use vars qw( $VERSION );
 
 use Sys::Info::Driver::Windows 0.69 qw( :metrics :WMI );
 
-$VERSION = '0.69_10';
+$VERSION = '0.70';
 
 my %VISTA_EDITION = ( # OK
    0x00000006 => q{Business Edition},

@@ -1,6 +1,6 @@
 ---
 name: Sys-Info-Driver-Windows
-version: 0.69_11
+version: 0.70
 author:
   - 'Burak Gursoy <burak@cpan.org>'
 abstract: Windows driver for Sys::Info
@@ -10,8 +10,8 @@ resources:
 requires:
   ExtUtils::CBuilder: 0
   IO::File: 0
-  Sys::Info::Base: 0.69_11
-  Sys::Info::Driver::Unknown: 0.69_11
+  Sys::Info::Base: 0.70
+  Sys::Info::Driver::Unknown: 0.70
   Win32::OLE: 0
 build_requires:
   Test::More: 0.40
@@ -19,25 +19,25 @@ build_requires:
 provides:
   Sys::Info::Driver::Windows:
     file: lib/Sys/Info/Driver/Windows.pm
-    version: 0.69_11
+    version: 0.70
   Sys::Info::Driver::Windows::Device:
     file: lib/Sys/Info/Driver/Windows/Device.pm
-    version: 0.69_10
+    version: 0.70
   Sys::Info::Driver::Windows::Device::CPU:
     file: lib/Sys/Info/Driver/Windows/Device/CPU.pm
-    version: 0.69_10
+    version: 0.70
   Sys::Info::Driver::Windows::Device::CPU::WMI:
     file: lib/Sys/Info/Driver/Windows/Device/CPU/WMI.pm
-    version: 0.69_10
+    version: 0.70
   Sys::Info::Driver::Windows::OS:
     file: lib/Sys/Info/Driver/Windows/OS.pm
-    version: 0.69_10
+    version: 0.70
   Sys::Info::Driver::Windows::OS::Editions:
     file: lib/Sys/Info/Driver/Windows/OS/Editions.pm
-    version: 0.69_10
+    version: 0.70
   Sys::Info::Driver::Windows::OS::Net:
     file: lib/Sys/Info/Driver/Windows/OS/Net.pm
-    version: 0.69_10
+    version: 0.70
 generated_by: Module::Build version 0.32
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

@@ -56,8 +56,8 @@ PPCODE:
                         "GetNativeSystemInfo"
                     );
 
-    wProcessBitness = 0;
-    wProcessorBitness     = 0;
+    wProcessBitness   = 0;
+    wProcessorBitness = 0;
     bIsWow = FALSE;
 
     (NULL != pGNSI) ? pGNSI(&si) : GetSystemInfo(&si);
@@ -71,24 +71,24 @@ PPCODE:
                 lstrcpy(  wProcessorArchitecture2, TEXT("Alpha"));
                 wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
                 wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
-                wProcessBitness = 64;
-                wProcessorBitness     = 64;
+                wProcessBitness   = 64;
+                wProcessorBitness = 64;
                 break;
 
             case PROCESSOR_ARCHITECTURE_IA64:
                 lstrcpy(  wProcessorArchitecture2, TEXT("IA-64"));
                 wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
                 wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
-                wProcessBitness = 64;
-                wProcessorBitness     = 64;
+                wProcessBitness   = 64;
+                wProcessorBitness = 64;
                 break;
 
             case PROCESSOR_ARCHITECTURE_ALPHA64:
                 lstrcpy(wProcessorArchitecture2  , TEXT("Alpha64"));
                 wsprintf( wProcessorModel        , TEXT("%d"), HIBYTE(si.wProcessorRevision) );
                 wsprintf( wProcessorStepping     , TEXT("%d"), LOBYTE(si.wProcessorRevision) );
-                wProcessBitness = 64;
-                wProcessorBitness     = 64;
+                wProcessBitness   = 64;
+                wProcessorBitness = 64;
                 break;
 
             case PROCESSOR_ARCHITECTURE_INTEL:
@@ -108,21 +108,21 @@ PPCODE:
                         if (bIsWow) {
                             pGNSI(&si2);
                             if (si2.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64) {
-                                wProcessBitness = 32;
-                                wProcessorBitness     = 64;
+                                wProcessBitness   = 32;
+                                wProcessorBitness = 64;
                                 //printf("32 bit process on IA64");
                             } else if (si2.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64) {
-                                wProcessBitness = 32;
-                                wProcessorBitness     = 64;
+                                wProcessBitness   = 32;
+                                wProcessorBitness = 64;
                                 //printf("32 bit process on AMD64");
                             } else {
                                 //printf("I am running in the future!");
                             }
                         } else {
-                            wProcessorBitness     = (si.wProcessorLevel == 6 && si.wProcessorRevision >= 14)
-                                            ? 64 // Core2
-                                            : 32;
-                            wProcessBitness = 32;
+                            wProcessorBitness = (si.wProcessorLevel == 6 && si.wProcessorRevision >= 14)
+                                              ? 64 // Core2
+                                              : 32;
+                            wProcessBitness   = 32;
                         }
                     }
                 }
@@ -183,8 +183,8 @@ PPCODE:
         PUSHs( sv_2mortal( newSVpv( "wProcessBitness"             , 0 ) ) );
         PUSHs( sv_2mortal( newSViv(  wProcessBitness                  ) ) );
 
-        PUSHs( sv_2mortal( newSVpv( "wProcessorBitness"                 , 0 ) ) );
-        PUSHs( sv_2mortal( newSViv(  wProcessorBitness                      ) ) );
+        PUSHs( sv_2mortal( newSVpv( "wProcessorBitness"            , 0 ) ) );
+        PUSHs( sv_2mortal( newSViv(  wProcessorBitness                 ) ) );
 
     }
     else {

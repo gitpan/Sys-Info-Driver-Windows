@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows::OS;
 use strict;
 use vars qw( $VERSION );
 
-$VERSION = '0.69_10';
+$VERSION = '0.70';
 
 use base qw( Sys::Info::Driver::Windows::OS::Editions );
 use Win32;

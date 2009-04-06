@@ -11,8 +11,8 @@ use vars qw(%PREREQ %RECOMMEND %BUILD_REQ);
 
 %PREREQ = (
    'IO::File'                   => 0,
-   'Sys::Info::Base'            => '0.69_11',
-   'Sys::Info::Driver::Unknown' => '0.69_11',
+   'Sys::Info::Base'            => '0.70',
+   'Sys::Info::Driver::Unknown' => '0.70',
    'ExtUtils::CBuilder'         => 0,
    'Win32::OLE'                 => 0,
 );

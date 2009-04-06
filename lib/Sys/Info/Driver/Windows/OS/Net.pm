@@ -4,7 +4,7 @@ use vars qw($VERSION);
 use Win32;
 use Sys::Info::Constants qw( WIN_USER_INFO_LEVEL );
 
-$VERSION = '0.69_10';
+$VERSION = '0.70';
 
 BEGIN {
     if ( ! Win32::IsWin95() ) {

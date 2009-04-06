@@ -9,7 +9,7 @@ use Sys::Info::Constants qw( :windows_reg );
 use Sys::Info::Driver::Windows qw( :info );
 use Carp qw( croak );
 
-$VERSION = '0.69_10';
+$VERSION = '0.70';
 
 my $REG;
 TRY_TO_LOAD: {
