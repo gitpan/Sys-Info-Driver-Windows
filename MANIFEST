@@ -6,16 +6,19 @@ lib/Sys/Info/Driver/Windows/OS.pm
 lib/Sys/Info/Driver/Windows/OS/Editions.pm
 lib/Sys/Info/Driver/Windows/OS/Net.pm
 tools/ppport.pl
-t/01-pod.t
-t/02-pod-coverage.t
 t/03-basic.t
 t/04-metrics.t
 Build.PL
-Makefile.PL
 ppport.h
 Windows.xs
-META.yml
 README
 Changes
 MANIFEST
-PREREQ
+SPEC
+builder/Build.pm
+builder/Build/Spec.pm
+t/201-pod.t
+t/202-pod-coverage.t
+Makefile.PL	Generated automatically
+LICENSE
+META.yml

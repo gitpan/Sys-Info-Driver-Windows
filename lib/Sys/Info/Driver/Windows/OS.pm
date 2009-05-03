@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows::OS;
 use strict;
 use vars qw( $VERSION );
 
-$VERSION = '0.70';
+$VERSION = '0.72';
 
 use base qw( Sys::Info::Driver::Windows::OS::Editions );
 use Win32;
@@ -345,6 +345,9 @@ Sys::Info::Driver::Windows::OS - Windows backend for Sys::Info::OS
 This is a private sub-class.
 
 =head1 DESCRIPTION
+
+This document describes version C<0.72> of C<Sys::Info::Driver::Windows::OS>
+released on C<3 May 2009>.
 
 This document only discusses the driver specific parts.
 

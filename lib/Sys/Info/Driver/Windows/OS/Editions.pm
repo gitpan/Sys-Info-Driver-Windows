@@ -4,7 +4,7 @@ use vars qw( $VERSION );
 
 use Sys::Info::Driver::Windows 0.69 qw( :metrics :WMI );
 
-$VERSION = '0.70';
+$VERSION = '0.72';
 
 my %VISTA_EDITION = ( # OK
    0x00000006 => q{Business Edition},
@@ -224,6 +224,9 @@ Sys::Info::Driver::Windows::OS::Editions - Interface to identify Windows edition
 None. Used internally.
 
 =head1 DESCRIPTION
+
+This document describes version C<0.72> of C<Sys::Info::Driver::Windows::OS::Editions>
+released on C<3 May 2009>.
 
 Although there are not much Windows versions, there are ridiculously lots of
 editions of Windows versions after Windows 2000. This module uses C<WMI>,

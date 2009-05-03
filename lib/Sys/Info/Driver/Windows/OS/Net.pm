@@ -4,7 +4,7 @@ use vars qw($VERSION);
 use Win32;
 use Sys::Info::Constants qw( WIN_USER_INFO_LEVEL );
 
-$VERSION = '0.70';
+$VERSION = '0.72';
 
 BEGIN {
     if ( ! Win32::IsWin95() ) {
@@ -56,6 +56,9 @@ Sys::Info::Driver::Windows::OS::Net - A minimal interface to Win32API::Net
     print Sys::Info::Driver::Windows::OS::Net->user_fullname( $login );
 
 =head1 DESCRIPTION
+
+This document describes version C<0.72> of C<Sys::Info::Driver::Windows::OS::Net>
+released on C<3 May 2009>.
 
 A minimal interface to Win32API::Net. If you're under Win9x, all methods
 will return C<undef>.

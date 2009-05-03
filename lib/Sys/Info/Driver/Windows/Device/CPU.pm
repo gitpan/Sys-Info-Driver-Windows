@@ -9,7 +9,7 @@ use Sys::Info::Constants qw( :windows_reg );
 use Sys::Info::Driver::Windows qw( :info );
 use Carp qw( croak );
 
-$VERSION = '0.70';
+$VERSION = '0.72';
 
 my $REG;
 TRY_TO_LOAD: {
@@ -108,6 +108,9 @@ Sys::Info::Driver::Windows::Device::CPU - Windows CPU Device Driver
 -
 
 =head1 DESCRIPTION
+
+This document describes version C<0.72> of C<Sys::Info::Driver::Windows::Device::CPU>
+released on C<3 May 2009>.
 
 Uses C<WMI>, C<Registry> and C<ENV> to identify the CPU.
 

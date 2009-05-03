@@ -1,22 +1,7 @@
-die "OS unsupported\n" if $^O !~ m{ \A MSWin }xmsi;
-
 use strict;
-use vars qw(%PREREQ %RECOMMEND %BUILD_REQ);
-use Cwd;
-use Module::Build;
+use lib qw( builder );
+use Build;
 
-do 'PREREQ' or die "Error including PREREQ: $!";
-
-my $mb = Module::Build->new(
-    module_name    => 'Sys::Info::Driver::Windows',
-    license        => 'perl',
-    requires       => \%PREREQ,
-    build_requires => \%BUILD_REQ,
-    recommends     => \%RECOMMEND,
-    sign           => 0,
-    dist_author    => 'Burak Gursoy <burak@cpan.org>',
-    include_dirs   => [ '.' ],
-    xs_files       => { 'Windows.xs' => 'lib/Sys/Info/Driver/Windows.xs' },
-);
-
+my $mb = Build->new;
+$mb->change_versions(1);
 $mb->create_build_script;

@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows::Device;
 use strict;
 use vars qw( $VERSION );
 
-$VERSION = '0.70';
+$VERSION = '0.72';
 
 1;
 
@@ -17,6 +17,9 @@ Sys::Info::Driver::Windows::Device - Base class for Windows device drivers
     use base qw( Sys::Info::Driver::Windows::Device );
 
 =head1 DESCRIPTION
+
+This document describes version C<0.72> of C<Sys::Info::Driver::Windows::Device>
+released on C<3 May 2009>.
 
 Base class for Windows device drivers.
 

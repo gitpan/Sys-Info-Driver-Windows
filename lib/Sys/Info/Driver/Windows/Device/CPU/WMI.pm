@@ -5,7 +5,7 @@ use Win32::OLE qw (in);
 use Sys::Info::Driver::Windows qw(:WMI);
 use base qw( Sys::Info::Base );
 
-$VERSION = '0.70';
+$VERSION = '0.72';
 
 my $WMI_INFO = {
     CpuStatus => {
@@ -338,6 +338,9 @@ Sys::Info::Driver::Windows::Device::CPU::WMI - Fetch CPU metadata through WMI
 Nothing public here.
 
 =head1 DESCRIPTION
+
+This document describes version C<0.72> of C<Sys::Info::Driver::Windows::Device::CPU::WMI>
+released on C<3 May 2009>.
 
 WMI plugin.
 

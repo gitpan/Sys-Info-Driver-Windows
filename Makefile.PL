@@ -1,19 +1,18 @@
-#!/usr/bin/perl
-die "OS unsupported\n" if $^O !~ m{ \A MSWin }xmsi;
-
+#!/usr/bin/env perl
 use strict;
-use vars qw(%PREREQ %RECOMMEND %BUILD_REQ);
 use ExtUtils::MakeMaker;
+use lib qw( builder );
+use Build::Spec qw( mm_spec );
 
-do 'PREREQ' or die "Error including PREREQ: $!";
+my %spec = mm_spec;
 
 WriteMakefile(
-    NAME         => 'Sys::Info::Driver::Windows',
-    VERSION_FROM => 'lib/Sys/Info/Driver/Windows.pm',
-    PREREQ_PM    => { %PREREQ, %RECOMMEND, %BUILD_REQ },
-    ($] >= 5.005 ? (
-    AUTHOR       => 'Burak Gursoy <burak@cpan.org>',
-    ABSTRACT     => 'Windows driver for Sys::Info',
-    ) : ()),
+    NAME         => $spec{module_name},
+    VERSION_FROM => $spec{VERSION_FROM},
+    PREREQ_PM    => $spec{PREREQ_PM},
     PL_FILES     => {},
+    ($] >= 5.005 ? (
+    AUTHOR       => $spec{dist_author},
+    ABSTRACT     => $spec{ABSTRACT},
+    ) : ()),
 );

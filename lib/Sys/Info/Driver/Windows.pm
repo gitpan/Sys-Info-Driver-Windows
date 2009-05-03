@@ -14,7 +14,7 @@ use constant SM_SERVERR2    => 89; # Windows Server 2003 R2
 use Exporter ();
 use XSLoader;
 
-$VERSION = '0.70';
+$VERSION = '0.72';
 @ISA     = qw( Exporter );
 @EXPORT  = qw(  );
 %EXPORT_TAGS = (
@@ -98,6 +98,9 @@ Sys::Info::Driver::Windows - Windows driver for Sys::Info
     }
 
 =head1 DESCRIPTION
+
+This document describes version C<0.72> of C<Sys::Info::Driver::Windows>
+released on C<3 May 2009>.
 
 This is the main module in the C<Windows> driver collection.
 
