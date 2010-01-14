@@ -1,29 +1,19 @@
 package Sys::Info::Driver::Windows::Device::CPU;
 use strict;
-use vars     qw( $VERSION @ISA $Registry );
+use warnings;
+#use vars     qw( $Registry );
 use base qw(
     Sys::Info::Driver::Unknown::Device::CPU::Env
     Sys::Info::Driver::Windows::Device::CPU::WMI
 );
-use Sys::Info::Constants qw( :windows_reg );
-use Sys::Info::Driver::Windows qw( :info );
-use Carp qw( croak );
+use Sys::Info::Constants       qw( :windows_reg    );
+use Sys::Info::Driver::Windows qw( :info :reg :WMI );
+use Carp                       qw( croak           );
+use Win32::OLE                 qw( in              );
 
-$VERSION = '0.72';
-
+our $VERSION = '0.73';
 my $REG;
-TRY_TO_LOAD: {
-    # SetDualVar req. in Win32::TieRegistry breaks any handler
-    local $SIG{__DIE__};
-    local $@;
-    eval {
-        require Win32::TieRegistry;
-        Win32::TieRegistry->import(Delimiter => '/');
-    };
-    if ( ! $@ && defined $Registry->{+WIN_REG_HW_KEY} ) {
-        $REG = $Registry->{ +WIN_REG_CPU_KEY };
-    }
-}
+$REG = registry()->{ +WIN_REG_CPU_KEY } if registry()->{ +WIN_REG_HW_KEY };
 
 sub load {
     my $self = shift;
@@ -33,8 +23,21 @@ sub load {
 
 sub bitness {
     my $self = shift;
+    ## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
+    # XXX: put this into ->arch()
+    if ( my($cpu) = $self->_from_wmi ) {
+        my $arch = $cpu->{architecture};
+        if ( $arch ) {
+            return +( $arch eq 'x64' || $arch =~ m{Itanium}xms ) ? 64 : 32;
+        }
+    }
     my %i    = GetSystemInfo();
-    return $i{wProcessorBitness};
+    my $bits = $i{wProcessorBitness};
+    if ( $bits < 0 ) {
+        warn "Failed to detect processor bitness. Guessing as 32bit\n";
+        return 32;
+    }
+    return $bits;
 }
 
 # XXX: interface is unclear. return data based on context !!!
@@ -43,10 +46,10 @@ sub bitness {
 sub identify {
     my $self = shift;
     if ( ! $self->{META_DATA} ) {
-        my @cache = $self->_from_wmi 
+        my @cache = $self->_from_wmi
                     or $self->_from_registry
                     or $self->SUPER::identify(@_)
-                    or croak("Failed to identify CPU");
+                    or croak('Failed to identify CPU');
         $self->{META_DATA} = [ @cache ];
     }
     return $self->_serve_from_cache(wantarray);
@@ -99,6 +102,8 @@ sub __env_pi { # XXX: remove this thing
 
 __END__
 
+=pod
+
 =head1 NAME
 
 Sys::Info::Driver::Windows::Device::CPU - Windows CPU Device Driver
@@ -109,8 +114,8 @@ Sys::Info::Driver::Windows::Device::CPU - Windows CPU Device Driver
 
 =head1 DESCRIPTION
 
-This document describes version C<0.72> of C<Sys::Info::Driver::Windows::Device::CPU>
-released on C<3 May 2009>.
+This document describes version C<0.73> of C<Sys::Info::Driver::Windows::Device::CPU>
+released on C<14 January 2010>.
 
 Uses C<WMI>, C<Registry> and C<ENV> to identify the CPU.
 
@@ -135,16 +140,16 @@ L<Sys::Info::Device::CPU>.
 
 =head1 AUTHOR
 
-Burak Gürsoy, E<lt>burakE<64>cpan.orgE<gt>
+Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2006-2009 Burak Gürsoy. All rights reserved.
+Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.10.0 or, 
+it under the same terms as Perl itself, either Perl version 5.10.1 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut

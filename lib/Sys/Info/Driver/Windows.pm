@@ -1,8 +1,8 @@
 package Sys::Info::Driver::Windows;
 use strict;
-use vars qw( $VERSION @ISA @EXPORT %EXPORT_TAGS @EXPORT_OK );
-use Exporter ();
-use Carp qw( croak );
+use warnings;
+use base qw( Exporter );
+use Carp qw( croak    );
 use Sys::Info::Constants qw( WIN_B24_DIGITS );
 
 # (only relevant) indexes for GetSystemMetrics()
@@ -11,13 +11,35 @@ use constant SM_MEDIACENTER => 87; # Windows XP, Media Center Edition
 use constant SM_STARTER     => 88; # Windows XP Starter Edition
 use constant SM_SERVERR2    => 89; # Windows Server 2003 R2
 
-use Exporter ();
+use constant SERIAL_BASE    => 24;
+
+# Win32::SystemInfo::CpuUsage ???
+
 use XSLoader;
 
-$VERSION = '0.72';
-@ISA     = qw( Exporter );
-@EXPORT  = qw(  );
-%EXPORT_TAGS = (
+my %REGISTRY;
+BEGIN {
+    # SetDualVar req. in Win32::TieRegistry breaks any handler
+    local $SIG{__DIE__};
+    local $@;
+
+    my $eok = eval {
+        require Win32::TieRegistry;
+        Win32::TieRegistry->import(
+            TiedHash  => \%REGISTRY,
+            Delimiter => q{/},
+        );
+        1;
+    };
+    if ( $@ || ! $eok ) {
+        my $error = $@ || '<unknown error>';
+        croak "Error loading Win32::TieRegistry-: $error";
+    }
+}
+
+our $VERSION = '0.73';
+our @EXPORT  = qw(  );
+our %EXPORT_TAGS = (
     metrics => [qw/
         GetSystemMetrics
         SM_TABLETPC
@@ -30,21 +52,24 @@ $VERSION = '0.72';
     /],
     WMI => [qw/ WMI WMI_FOR /],
     etc => [qw/decode_serial_key/],
+    reg => [ qw( registry ) ],
 );
-@EXPORT_OK        = map { @{ $EXPORT_TAGS{$_} } } keys %EXPORT_TAGS;
+our @EXPORT_OK    = map { @{ $EXPORT_TAGS{$_} } } keys %EXPORT_TAGS;
 $EXPORT_TAGS{all} = \@EXPORT_OK;
 
 XSLoader::load( __PACKAGE__, $VERSION );
 
+sub registry { return \%REGISTRY }
+
 sub WMI {
-    my $WMI = Win32::OLE->GetObject("WinMgmts:") || return; 
-    croak Win32::OLE->LastError() if Win32::OLE->LastError() != 0;
+    my $WMI = Win32::OLE->GetObject( 'WinMgmts:' ) || return;
+    croak Win32::OLE->LastError if Win32::OLE->LastError != 0;
     return $WMI;
 }
 
 sub WMI_FOR {
     my $WMI = WMI() || return;
-    my $ID  = shift || die "No WMI Class specified";
+    my $ID  = shift || croak 'No WMI Class specified';
     my $O   = $WMI->InstancesOf( $ID ) || return;
     croak Win32::OLE->LastError() if Win32::OLE->LastError() != 0;
     return $O;
@@ -55,7 +80,8 @@ sub decode_serial_key {
     #     http://www.perlmonks.org/?node_id=497616
     #     (c) Original code: William Gannon
     #     (c) Modifications: Charles Clarkson
-    my $key     = shift || die "Key is missing";
+    ## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
+    my $key     = shift || croak 'Key is missing';
     my @encoded = ( unpack 'C*', $key )[ reverse 52 .. 66 ];
     use integer;
 
@@ -63,11 +89,11 @@ sub decode_serial_key {
         my( $index, $encoded ) = @_;
         my $dividend = $index * 256 ^ $encoded;
         # return modulus and integer quotient
-        return( $dividend % 24, $dividend / 24 );
+        return( $dividend % SERIAL_BASE, $dividend / SERIAL_BASE );
     };
 
     my @indices;
-    foreach my $i ( 0 .. 24 ) {
+    foreach my $i ( 0 .. SERIAL_BASE ) {
         my $index = 0;
         foreach my $j (@encoded) { # Shift off remainder
             ( $index, $j ) = $quotient->( $index, $j );
@@ -76,15 +102,17 @@ sub decode_serial_key {
     }
 
     # translate base 24 "digits" to characters
-    my $cd_key = join '', (WIN_B24_DIGITS)[ @indices ];
+    my $cd_key = join q{}, (WIN_B24_DIGITS)[ @indices ];
 
     # Add seperators and return
-    return join '-', $cd_key =~ /(.{5})/g;
+    return join q{-}, $cd_key =~ m/(.{5})/xmsg;
 }
 
 1;
 
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -99,8 +127,8 @@ Sys::Info::Driver::Windows - Windows driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.72> of C<Sys::Info::Driver::Windows>
-released on C<3 May 2009>.
+This document describes version C<0.73> of C<Sys::Info::Driver::Windows>
+released on C<14 January 2010>.
 
 This is the main module in the C<Windows> driver collection.
 
@@ -112,6 +140,10 @@ None.
 
 The following functions will be automatically exported when the module
 is used.
+
+=head2 registry
+
+Returns a C<Win32::TieRegistry> hashref.
 
 =head2 WMI
 
@@ -162,16 +194,16 @@ L<http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx>.
 
 =head1 AUTHOR
 
-Burak Gürsoy, E<lt>burakE<64>cpan.orgE<gt>
+Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2006-2009 Burak Gürsoy. All rights reserved.
+Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.10.0 or, 
+it under the same terms as Perl itself, either Perl version 5.10.1 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut

@@ -1,10 +1,11 @@
 package Sys::Info::Driver::Windows::OS::Editions;
 use strict;
-use vars qw( $VERSION );
+use warnings;
+use Sys::Info::Driver::Windows qw( :metrics :WMI );
 
-use Sys::Info::Driver::Windows 0.69 qw( :metrics :WMI );
+## no critic (ValuesAndExpressions::ProhibitMagicNumbers, ValuesAndExpressions::RequireNumberSeparators)
 
-$VERSION = '0.72';
+our $VERSION = '0.73';
 
 my %VISTA_EDITION = ( # OK
    0x00000006 => q{Business Edition},
@@ -57,65 +58,59 @@ sub _xp_or_03 {
 
     my $mask   = $OSV->{RAW}{SUITEMASK};
     my $pt     = $OSV->{RAW}{PRODUCTTYPE};
-    my $arch   = $self->_cpu_arch || '';
+    my $arch   = $self->_cpu_arch || q{};
     my $metric = GetSystemMetrics(SM_SERVERR2);
 
-    $$osname_ref = 'Windows Server 2003';
+    ${$osname_ref} = 'Windows Server 2003';
 
     if ( $mask & 0x00000080 ) {
         if ( $metric ) {
-            $$edition_ref = $arch =~ m{X86}i   ? 'R2 Datacenter Edition'
-                          : $arch =~ m{AMD64}i ? 'R2 x64 Datacenter Edition'
-                          :                      'unknown'
-                          ;
+            ${$edition_ref} = $arch =~ m{X86}xmsi   ? 'R2 Datacenter Edition'
+                            : $arch =~ m{AMD64}xmsi ? 'R2 x64 Datacenter Edition'
+                            :                         'unknown';
         }
         else {
-            $$edition_ref = $arch =~m{X86}i     ? 'Datacenter Edition'
-                          : $arch =~m{AMD64}i   ? 'Datacenter x64 Edition'
-                          : $arch =~m{IA64}i    ? 'Datacenter Edition Itanium'
-                          :                       'unknown'
-                          ;
+            ${$edition_ref} = $arch =~m{X86}xmsi    ? 'Datacenter Edition'
+                            : $arch =~m{AMD64}xmsi  ? 'Datacenter x64 Edition'
+                            : $arch =~m{IA64}xmsi   ? 'Datacenter Edition Itanium'
+                            :                         'unknown';
         }
     }
     elsif ( $mask & 0x00000002 ) {
         if ( $metric ) {
-            $$edition_ref = $arch =~ m{X86}i    ? 'R2 Enterprise Edition'
-                          : $arch =~ m{AMD64}i  ? 'R2 x64 Enterprise Edition'
-                          :                       'unknown'
-                          ;
+            ${$edition_ref} = $arch =~ m{X86}xmsi   ? 'R2 Enterprise Edition'
+                            : $arch =~ m{AMD64}xmsi ? 'R2 x64 Enterprise Edition'
+                            :                         'unknown';
         }
         else {
-            $$edition_ref = $arch =~ m{X86}i    ? 'Enterprise Edition'
-                          : $arch =~ m{AMD64}i  ? 'Enterprise x64 Edition'
-                          : $arch =~ m{IA64}i   ? 'Enterprise Edition Itanium'
-                          :                       'unknown'
-                          ;
+            ${$edition_ref} = $arch =~ m{X86}xmsi   ? 'Enterprise Edition'
+                            : $arch =~ m{AMD64}xmsi ? 'Enterprise x64 Edition'
+                            : $arch =~ m{IA64}xmsi  ? 'Enterprise Edition Itanium'
+                            :                         'unknown';
         }
     }
     else {
         if ( $metric ) {
-            $$edition_ref = $arch =~ m{X86}i   ? 'R2 Standard Edition'
-                          : $arch =~ m{AMD64}i ? 'R2 x64 Standard Edition'
-                          :                      'unknown'
-                          ;
+            ${$edition_ref} = $arch =~ m{X86}xmsi   ? 'R2 Standard Edition'
+                            : $arch =~ m{AMD64}xmsi ? 'R2 x64 Standard Edition'
+                            :                         'unknown';
         }
         elsif ( $pt > 1 ) {
-            $$edition_ref = $arch =~ m{X86}i   ? 'Standard Edition'
-                          : $arch =~ m{AMD64}i ? 'Standard x64 Edition'
-                          :                      'unknown'
-                          ;
+            ${$edition_ref} = $arch =~ m{X86}xmsi   ? 'Standard Edition'
+                            : $arch =~ m{AMD64}xmsi ? 'Standard x64 Edition'
+                            :                         'unknown';
         }
         elsif ( $pt == 1 ) {
-            $$osname_ref  = 'Windows XP';
-            $$edition_ref = $arch =~ m{IA64}i  ? '64 bit Edition Version 2003'
-                          : $arch =~ m{AMD64}i ? 'Professional x64 Edition'
-                          :                      'unknown'
-                          ;
+            ${$osname_ref}  = 'Windows XP';
+            ${$edition_ref} = $arch =~ m{IA64}xmsi  ? '64 bit Edition Version 2003'
+                            : $arch =~ m{AMD64}xmsi ? 'Professional x64 Edition'
+                            :                         'unknown';
         }
         else {
-            $$edition_ref = 'unknown';
+            ${$edition_ref} = 'unknown';
         }
     }
+    return;
 }
 
 sub _xp_editions {
@@ -125,14 +120,14 @@ sub _xp_editions {
     my $OSV         = shift;
     my $arch        = $self->_cpu_arch;
 
-    $$osname_ref  = 'Windows XP';
-    $$edition_ref = GetSystemMetrics(SM_TABLETPC)    ? 'Tablet PC Edition'
-                  : GetSystemMetrics(SM_MEDIACENTER) ? 'Media Center Edition'
-                  : GetSystemMetrics(SM_STARTER)     ? 'Starter Edition'
-                  : $arch =~ m{x86}i                 ? 'Professional'
-                  : $arch =~ m{IA64}i                ? '64-bit Edition for Itanium systems'
-                  :                                    ''
-                  ;
+    ${$osname_ref}  = 'Windows XP';
+    ${$edition_ref} = GetSystemMetrics(SM_TABLETPC)    ? 'Tablet PC Edition'
+                    : GetSystemMetrics(SM_MEDIACENTER) ? 'Media Center Edition'
+                    : GetSystemMetrics(SM_STARTER)     ? 'Starter Edition'
+                    : $arch =~ m{x86}xmsi              ? 'Professional'
+                    : $arch =~ m{IA64}xmsi             ? '64-bit Edition for Itanium systems'
+                    :                                    q{};
+    return;
 }
 
 sub _2k_03_xp {
@@ -141,79 +136,106 @@ sub _2k_03_xp {
     my $osname_ref  = shift;
     my $OSV         = shift;
 
-    my $mask = $OSV->{RAW}{SUITEMASK};
-    my $pt   = $OSV->{RAW}{PRODUCTTYPE};
+    my $mask        = $OSV->{RAW}{SUITEMASK};
+    my $pt          = $OSV->{RAW}{PRODUCTTYPE};
 
-    $$osname_ref = 'Windows 2000';
+    ${$osname_ref}  = 'Windows 2000';
 
-    if ( $mask & 0x00000080 ) {
-        $$edition_ref = 'Datacenter Server';
+    if ( $mask & 0x00000080 ) { ## no critic (ControlStructures::ProhibitCascadingIfElse)
+        ${$edition_ref} = 'Datacenter Server';
     }
     elsif ( $mask & 0x00000002) {
-        $$edition_ref = 'Advanced Server';
+        ${$edition_ref} = 'Advanced Server';
     }
     elsif (! $mask && $pt == 1 ) {
-        $$edition_ref = 'Professional';
+        ${$edition_ref} = 'Professional';
     }
     elsif (! $mask && $pt > 1 ) {
-        $$edition_ref = 'Server';
+        ${$edition_ref} = 'Server';
     }
     elsif ( $mask & 0x00000400 ) {
-        $$osname_ref  = 'Windows Server 2003';
-        $$edition_ref = GetSystemMetrics(SM_SERVERR2) ? 'R2 Web Edition'
+        ${$osname_ref}  = 'Windows Server 2003';
+        ${$edition_ref} = GetSystemMetrics(SM_SERVERR2) ? 'R2 Web Edition'
                                                       : 'Web Edition';
     }
     elsif ( $mask & 0x00004000) {
-        $$osname_ref  = 'Windows Server 2003';
-        $$edition_ref = GetSystemMetrics(SM_SERVERR2) ? 'R2 Compute Cluster Edition'
+        ${$osname_ref}  = 'Windows Server 2003';
+        ${$edition_ref} = GetSystemMetrics(SM_SERVERR2) ? 'R2 Compute Cluster Edition'
                                                       : 'Compute Cluster Edition';
     }
     elsif ( $mask & 0x00002000) {
-        $$osname_ref  = 'Windows Server 2003';
-        $$edition_ref = GetSystemMetrics(SM_SERVERR2) ? 'R2 Storage'
+        ${$osname_ref}  = 'Windows Server 2003';
+        ${$edition_ref} = GetSystemMetrics(SM_SERVERR2) ? 'R2 Storage'
                                                       : 'Storage';
     }
     elsif ($mask & 0x00000040 ) {
-        $$osname_ref  = 'Windows XP';
-        $$edition_ref = 'Embedded';
+        ${$osname_ref}  = 'Windows XP';
+        ${$edition_ref} = 'Embedded';
     }
     elsif ($mask & 0x00000200) {
-        $$osname_ref  = 'Windows XP';
-        $$edition_ref = 'Home Edition';
+        ${$osname_ref}  = 'Windows XP';
+        ${$edition_ref} = 'Home Edition';
     }
     else {
-        warn "Unable to identify this Windows version";
+        warn "Unable to identify this Windows version\n";
     }
+    return;
 }
 
 sub _vista_or_08 {
     my $self        = shift;
     my $edition_ref = shift;
     my $osname_ref  = shift;
+    my $WMI_OS      = WMI_FOR('Win32_OperatingSystem');
+    return if ! $WMI_OS;
 
     # fall-back
-    if ( my $WMI_OS = WMI_FOR('Win32_OperatingSystem') ) {
-        my $item    = ( in $WMI_OS )[0];
-        my $SKU     = $item->OperatingSystemSKU();
-        my $caption = $item->Caption();
-        if ( my $vista = $VISTA_EDITION{ $SKU } ) {
-            $$edition_ref = $vista;
-            $$osname_ref  = 'Windows Vista';
-        }
-        elsif ( my $ws08 = $SERVER08_EDITION{ $SKU } ) {
-            $$edition_ref = $ws08;
-            $$osname_ref  = 'Windows Server 2008'; # oh yeah!
-        }
-        else {
-            warn "Unable to identify this Windows version 6. Marking as Vista";
-            $$osname_ref = 'Windows Vista';
-        }
+    my $item    = ( in $WMI_OS )[0];
+    my $SKU     = $item->OperatingSystemSKU;
+    my $caption = $item->Caption;
+
+    if ( my $vista = $VISTA_EDITION{ $SKU } ) {
+        ${$edition_ref} = $vista;
+        ${$osname_ref}  = 'Windows Vista';
     }
+    elsif ( my $ws08 = $SERVER08_EDITION{ $SKU } ) {
+        ${$edition_ref} = $ws08;
+        ${$osname_ref}  = 'Windows Server 2008'; # oh yeah!
+    }
+    else {
+        warn "Unable to identify this Windows version 6. Marking as Vista\n";
+        ${$osname_ref} = 'Windows Vista';
+    }
+    return;
+}
+
+sub _win7 {
+    my $self        = shift;
+    my $edition_ref = shift;
+    my $osname_ref  = shift;
+    my $WMI_OS      = WMI_FOR('Win32_OperatingSystem');
+    return if ! $WMI_OS;
+
+    # fall-back
+    my $item    = ( in $WMI_OS )[0];
+    my $SKU     = $item->OperatingSystemSKU;
+
+    ${$osname_ref} = 'Windows 7';
+    if ( my $win7 = $VISTA_EDITION{ $SKU } ) {
+        ${$edition_ref} = $win7;
+    }
+    else {
+        (my $caption = $item->Caption) =~ s{.+?Windows \s 7\s?}{}xms;
+        ${$edition_ref} = $self->trim($caption) if $caption;
+    }
+    return;
 }
 
 1;
 
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -225,8 +247,8 @@ None. Used internally.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.72> of C<Sys::Info::Driver::Windows::OS::Editions>
-released on C<3 May 2009>.
+This document describes version C<0.73> of C<Sys::Info::Driver::Windows::OS::Editions>
+released on C<14 January 2010>.
 
 Although there are not much Windows versions, there are ridiculously lots of
 editions of Windows versions after Windows 2000. This module uses C<WMI>,
@@ -241,16 +263,16 @@ L<Sys::Info::Driver::Windows>.
 
 =head1 AUTHOR
 
-Burak Gürsoy, E<lt>burakE<64>cpan.orgE<gt>
+Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2006-2009 Burak Gürsoy. All rights reserved.
+Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.10.0 or, 
+it under the same terms as Perl itself, either Perl version 5.10.1 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut

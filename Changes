@@ -2,6 +2,18 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
+0.73 Sun Jan 10 06:13:24 2010
+    => Support new uname().
+    => Perl::Critic refactoring.
+    => Fix code crashing.
+    => Added a workaround for CPU bitness detection for 32bit Windows + 64bit CPU.
+       However, it's currently an ugly hack. Any patches are welcome.
+    => Fix for RT#53523.
+    => Windows 7 support.
+
+0.72 Fri May  8 07:21:32 2009
+    => Improve os->tz().
+
 0.72 Sun May  3 03:29:00 2009
     => Builder update.
 

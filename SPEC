@@ -2,13 +2,15 @@ die "OS unsupported\n" if $^O !~ m{ \A MSWin }xmsi;
 {
     module_name    => 'Sys::Info::Driver::Windows',
     requires       => {
-        'Sys::Info::Base'            => '0.72',
-        'Sys::Info::Driver::Unknown' => '0.72',
+        'Sys::Info::Base'            => '0.73',
+        'Sys::Info::Driver::Unknown' => '0.73',
         'ExtUtils::CBuilder'         => 0,
         'Win32::OLE'                 => 0,
+        'Win32::TieRegistry'         => 0,
+        ( $] < 5.006 ? ( 'warnings::compat' => 0 ) : ()),
     },
     build_requires => {
-        'Test::Sys::Info' => '0.15',
+        'Test::Sys::Info' => '0.20',
     },
     recommends     => {},
     sign           => 0,

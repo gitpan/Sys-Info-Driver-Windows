@@ -1,25 +1,21 @@
 package Sys::Info::Driver::Windows::OS;
 use strict;
-use vars qw( $VERSION );
+use warnings;
 
-$VERSION = '0.72';
+our $VERSION = '0.73';
 
+## no critic (ValuesAndExpressions::ProhibitMagicNumbers, ValuesAndExpressions::RequireNumberSeparators)
+
+use constant LAST_ELEMENT => -1;
+use constant MILISECOND   => 1000;
 use base qw( Sys::Info::Driver::Windows::OS::Editions );
 use Win32;
-use Win32::OLE qw( in );
-use Sys::Info::Driver::Windows qw( :all );
+use Win32::OLE                 qw( in    );
+use Carp                       qw( croak );
+use Sys::Info::Driver::Windows qw( :all  );
 use Sys::Info::Driver::Windows::OS::Net;
-use Carp qw( croak );
-BEGIN {
-    # SetDualVar req. in Win32::TieRegistry breaks any handler
-    local $SIG{__DIE__};
-    eval {
-        require Win32::TieRegistry;
-        Win32::TieRegistry->import( Delimiter => '/' );
-    };
-    die $@ if $@;
-}
-use Sys::Info::Constants qw( :windows_reg :windows_wmi );
+
+use Sys::Info::Constants qw( :windows_reg :windows_wmi NEW_PERL );
 
 # first row -> All; second row -> NT 4 SP6 and later
 my @OSV_NAMES = qw/
@@ -43,24 +39,26 @@ sub is_root {
          ;
 }
 
-sub node_name { Win32::NodeName() }
+sub node_name { return Win32::NodeName() }
 
 sub edition {
     my $self = shift->_populate_osversion;
-    $OSVERSION{RAW}->{EDITION};
+    return $OSVERSION{RAW}->{EDITION};
 }
 
 sub product_type {
-    my $self = shift->_populate_osversion;
-    my %opt  = @_ % 2 ? () : (@_);
+    my($self, @args) = @_;
+    $self->_populate_osversion;
+    my %opt  = @args % 2 ? () : @args;
     my $raw  = $OSVERSION{RAW}->{PRODUCTTYPE};
     return $raw if $opt{raw};
     return $self->_product_type( $raw );
 }
 
 sub name {
-    my $self = shift->_populate_osversion;
-    my %opt  = @_ % 2 ? () : (@_);
+    my($self, @args) = @_;
+    $self->_populate_osversion;
+    my %opt  = @args % 2 ? () : @args;
     my $id   = $opt{long} ? ($opt{edition} ? 'LONGNAME_EDITION' : 'LONGNAME')
              :              ($opt{edition} ? 'NAME_EDITION'     : 'NAME'    )
              ;
@@ -68,14 +66,15 @@ sub name {
 }
 
 sub version {
-    my $self    = shift->_populate_osversion;
-    my %opt     = @_ % 2 ? () : (@_);
+    my($self, @args) = @_;
+    $self->_populate_osversion;
+    my %opt     = @args % 2 ? () : @args;
     my $version = $OSVERSION{VERSION};
 
     if ( $opt{short} ) {
-        my @v = split /\./, $version;
-        shift(@v);
-        return join( '.', @v );
+        my @v = split /[.]/xms, $version;
+        shift @v;
+        return join q{.}, @v ;
     }
 
     return $version;
@@ -93,18 +92,19 @@ sub uptime {
 
 sub domain_name {
     my $self = shift;
-    return $self->is_win95() ? '' : Win32::DomainName()
+    return $self->is_win95() ? q{} : Win32::DomainName()
 }
 
 sub tick_count {
     my $self = shift;
     my $tick = Win32::GetTickCount();
-    return $tick ? $tick / 1000 : 0; # in miliseconds
+    return $tick ? $tick / MILISECOND : 0; # in miliseconds
 }
 
 sub login_name {
-    my $self  = shift;
-    my %opt   = @_ % 2 ? () : (@_);
+    my($self, @args) = @_;
+    $self->_populate_osversion;
+    my %opt   = @args % 2 ? () : @args;
     my $login = Win32::LoginName();
     return $opt{real} && $login
            ? Sys::Info::Driver::Windows::OS::Net->user_fullname( $login )
@@ -114,7 +114,7 @@ sub login_name {
 
 sub logon_server {
     my $self = shift;
-    my $name = $self->login_name || return '';
+    my $name = $self->login_name || return q{};
     return Sys::Info::Driver::Windows::OS::Net->user_logon_server( $name );
 }
 
@@ -126,9 +126,18 @@ sub fs {
 
 sub tz {
     my $self = shift;
-    foreach my $objItem ( in WMI_FOR('Win32_TimeZone') ) {
-        return $objItem->Caption;
+    my $tz;
+    foreach my $object ( in WMI_FOR('Win32_TimeZone') ) {
+        $tz = $object->Caption;
+        last;
     }
+    if ( NEW_PERL ) {
+        require Encode;
+        my $locale = $self->locale;
+        my $cp     = (split m{[.]}xms, $locale)[LAST_ELEMENT] + 0; # vugly hack
+        $tz = Encode::decode( "cp$cp", $tz ) if $cp;
+    }
+    return $tz;
 }
 
 sub meta {
@@ -163,22 +172,22 @@ sub meta {
 }
 
 sub cdkey {
+    my($self, @args) = @_;
     return if Win32::IsWin95(); # not supported
-    my $self = shift;
-    my %opt  = @_ % 2 ? () : (@_);
+    my %opt = @args % 2 ? () : @args;
 
     if ( $opt{office} ) {
-        my $base = $Registry->{ +WIN_REG_OCDKEY };
+        my $base = registry()->{ +WIN_REG_OCDKEY };
         my @versions;
         foreach my $e ( keys %{ $base } ) {
-            next if $e =~ m{[^0-9\./]}; # only get versioned keys
+            next if $e =~ m{[^0-9\./]}xms; # only get versioned keys
             $e =~ s{ / \z }{}xms;
             # check all installed office versions
             push @versions, $e if $base->{ $e . '/Registration' };
         }
 
         my @list;
-        foreach my $v ( sort { $b <=> $a } @versions ) {
+        foreach my $v ( reverse sort { $a <=> $b } @versions ) {
             my $key = $base->{ $v . '/Registration' };
             my $id  = ( keys %{ $key } )[0];
             my $val = $key->{ $id . 'DigitalProductId' } || next;
@@ -187,7 +196,7 @@ sub cdkey {
         return @list; #return all available keys
     }
 
-    my $val = $Registry->{ +WIN_REG_CDKEY } || return;
+    my $val = registry()->{ +WIN_REG_CDKEY } || return;
     return decode_serial_key( $val );
 }
 
@@ -202,7 +211,7 @@ sub bitness {
 sub _wmidate_to_unix {
     my $self  = shift;
     my $thing = shift || return;
-    my($date, $junk) = split /\./, $thing;
+    my($date, $junk) = split m/[.]/xms, $thing;
     my($year, $mon, $mday, $hour, $min, $sec) = unpack WIN_WMI_DATE_TMPL, $date;
     require Time::Local;
     return Time::Local::timelocal( $sec, $min, $hour, $mday, $mon-1, $year );
@@ -213,7 +222,7 @@ sub _populate_fs {
     my $self  = shift;
     my($FSTYPE, $FLAGS, $MAXCOMPLEN) = Win32::FsType();
     if ( !$FSTYPE && Win32::GetLastError() ) {
-        warn "Can not fetch file system information: $^E";
+        warn "Can not fetch file system information: $^E\n";
         return;
     }
     my %flag = (
@@ -231,7 +240,7 @@ sub _populate_fs {
         efs                => 0x00020000,  #'supports the Encrypted File System (EFS)',
     );
     my @fl;
-    if ($FLAGS) {
+    if ( $FLAGS ) {
         foreach my $f (keys %flag) {
             push @fl, $f => $flag{$f} & $FLAGS ? 1 : 0;
         }
@@ -247,7 +256,7 @@ sub _osversion_table {
     my $OSV     = shift;
 
     my $t       = sub { $OSV->{MAJOR} == $_[0] && $OSV->{MINOR} == $_[1] };
-    my $version = join '.', $OSV->{ID}, $OSV->{MAJOR}, $OSV->{MINOR};
+    my $version = join q{.}, $OSV->{ID}, $OSV->{MAJOR}, $OSV->{MINOR};
     my $ID      = $OSV->{ID};
     my($os,$edition);
 
@@ -268,6 +277,7 @@ sub _osversion_table {
             : $t->(5,1) ? $self->_xp_editions( \$edition, \$os, $OSV )
             : $t->(5,2) ? $self->_xp_or_03(    \$edition, \$os, $OSV )
             : $t->(6,0) ? $self->_vista_or_08( \$edition, \$os       )
+            : $t->(6,1) ? $self->_win7(        \$edition, \$os       )
             :             do { $os = "Windows NT $version" }
         }
     }
@@ -294,9 +304,9 @@ sub _populate_osversion { # returns the object
 
     %OSVERSION = (
         NAME             => $osname,
-        NAME_EDITION     => "$osname $edition",
-        LONGNAME         => '', # will be set below
-        LONGNAME_EDITION => '', # will be set below
+        NAME_EDITION     => $edition ? "$osname $edition" : $osname,
+        LONGNAME         => q{}, # will be set below
+        LONGNAME_EDITION => q{}, # will be set below
         VERSION          => $version,
         RAW              => {
             STRING      => $OSV{STRING},
@@ -312,11 +322,11 @@ sub _populate_osversion { # returns the object
         },
     );
 
-    my $build  = '';
+    my $build  = q{};
        $build .= "build $OSVERSION{RAW}->{BUILD}" if $OSVERSION{RAW}->{BUILD};
     my $string = $OSVERSION{RAW}->{STRING};
-    $OSVERSION{LONGNAME}         = join ' ', $OSVERSION{NAME}, $string, $build;
-    $OSVERSION{LONGNAME_EDITION} = join ' ', $OSVERSION{NAME_EDITION}, $string, $build;
+    $OSVERSION{LONGNAME}         = join q{ }, $OSVERSION{NAME}, $string, $build;
+    $OSVERSION{LONGNAME_EDITION} = join q{ }, $OSVERSION{NAME_EDITION}, $string, $build;
 
     return $self;
 }
@@ -346,8 +356,8 @@ This is a private sub-class.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.72> of C<Sys::Info::Driver::Windows::OS>
-released on C<3 May 2009>.
+This document describes version C<0.73> of C<Sys::Info::Driver::Windows::OS>
+released on C<14 January 2010>.
 
 This document only discusses the driver specific parts.
 
@@ -452,6 +462,20 @@ Copyright 2006-2009 Burak Gürsoy. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify 
 it under the same terms as Perl itself, either Perl version 5.10.0 or, 
+at your option, any later version of Perl 5 you may have available.
+
+=head1 AUTHOR
+
+Burak Gursoy <burak@cpan.org>.
+
+=head1 COPYRIGHT
+
+Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify 
+it under the same terms as Perl itself, either Perl version 5.10.1 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut

@@ -8,7 +8,8 @@ See the tests for examples.
 
 INSTALLATION
 
-To install this module type the following:
+You'll need a C compiler to install this module, as it has some XS code. MSVC6
+and MinGW compilers are recommended. To install this module type the following:
 
    perl Makefile.PL
    make
@@ -28,10 +29,10 @@ Only installs and works on Windows.
 
 COPYRIGHT
 
-Copyright (c) 2009 Burak Gürsoy. All rights reserved.
+Copyright (c) 2006-2010 Burak Gürsoy. All rights reserved.
 
 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.10.0 or, 
+it under the same terms as Perl itself, either Perl version 5.10.1 or, 
 at your option, any later version of Perl 5 you may have available.

@@ -45,6 +45,11 @@ PPCODE:
         - http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx
         - http://blogs.msdn.com/junfeng/archive/2005/07/01/434574.aspx
     */
+
+    ZeroMemory(&si,   sizeof(SYSTEM_INFO));
+    ZeroMemory(&si2,  sizeof(SYSTEM_INFO));
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
     if( !(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) )
@@ -110,18 +115,28 @@ PPCODE:
                             if (si2.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64) {
                                 wProcessBitness   = 32;
                                 wProcessorBitness = 64;
-                                //printf("32 bit process on IA64");
+                                lstrcpy( wProcessorArchitecture2, TEXT("IA-64") );
                             } else if (si2.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64) {
                                 wProcessBitness   = 32;
                                 wProcessorBitness = 64;
-                                //printf("32 bit process on AMD64");
+                                lstrcpy( wProcessorArchitecture2, TEXT("x64") );
                             } else {
-                                //printf("I am running in the future!");
+                                croak("I am running in the future!");
                             }
                         } else {
-                            wProcessorBitness = (si.wProcessorLevel == 6 && si.wProcessorRevision >= 14)
+                            /* wProcessorBitness = (si.wProcessorLevel == 6 && si.wProcessorRevision >= 14)
                                               ? 64 // Core2
-                                              : 32;
+                                              : 32; */
+                            /*
+                            This is tricky. Only way to get a correct value seems to be
+                               (1) either using "intrin.h" -> No good with MinGW
+                               (2) or using a WMI call -> too complex under XS
+                            So, I set this to -1 instead and then try to correct
+                            it in the Perl layer with a WMI call.
+                            Any patches regarding this are welcome.
+                            */
+                            lstrcpy( wProcessorArchitecture2, TEXT("x86 or x86-64") );
+                            wProcessorBitness = -1;
                             wProcessBitness   = 32;
                         }
                     }
@@ -180,8 +195,8 @@ PPCODE:
         PUSHs( sv_2mortal( newSVpv( "lpMaximumApplicationAddress"  , 0 ) ) );
         PUSHs( sv_2mortal( newSVuv( si.lpMaximumApplicationAddress     ) ) );
 
-        PUSHs( sv_2mortal( newSVpv( "wProcessBitness"             , 0 ) ) );
-        PUSHs( sv_2mortal( newSViv(  wProcessBitness                  ) ) );
+        PUSHs( sv_2mortal( newSVpv( "wProcessBitness"              , 0 ) ) );
+        PUSHs( sv_2mortal( newSViv(  wProcessBitness                   ) ) );
 
         PUSHs( sv_2mortal( newSVpv( "wProcessorBitness"            , 0 ) ) );
         PUSHs( sv_2mortal( newSViv(  wProcessorBitness                 ) ) );
@@ -189,5 +204,4 @@ PPCODE:
     }
     else {
         croak( "GetSystemInfo() can not be run on this version of Windows.");
-        //XSRETURN(0);
     }
