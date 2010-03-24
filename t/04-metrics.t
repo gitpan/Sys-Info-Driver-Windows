@@ -37,6 +37,11 @@ diag sprintf "CPU: %s Family %s Model %s Stepping %s\n",
 diag sprintf "Minimum Application Address: %lx\n", $si{lpMinimumApplicationAddress};
 diag sprintf "Maximum Application Address: %lx\n", $si{lpMaximumApplicationAddress};
 
+my %feat = CPUFeatures();
+my $d    = Data::Dumper->new([\%feat],['*FEATURES']);
+
+diag $d->Dump;
+
 ok( 1, 'The END' );
 
 1;

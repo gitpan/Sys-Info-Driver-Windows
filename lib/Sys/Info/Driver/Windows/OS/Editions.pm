@@ -5,7 +5,7 @@ use Sys::Info::Driver::Windows qw( :metrics :WMI );
 
 ## no critic (ValuesAndExpressions::ProhibitMagicNumbers, ValuesAndExpressions::RequireNumberSeparators)
 
-our $VERSION = '0.73';
+our $VERSION = '0.74_01';
 
 my %VISTA_EDITION = ( # OK
    0x00000006 => q{Business Edition},
@@ -70,9 +70,9 @@ sub _xp_or_03 {
                             :                         'unknown';
         }
         else {
-            ${$edition_ref} = $arch =~m{X86}xmsi    ? 'Datacenter Edition'
-                            : $arch =~m{AMD64}xmsi  ? 'Datacenter x64 Edition'
-                            : $arch =~m{IA64}xmsi   ? 'Datacenter Edition Itanium'
+            ${$edition_ref} = $arch =~ m{X86}xmsi   ? 'Datacenter Edition'
+                            : $arch =~ m{AMD64}xmsi ? 'Datacenter x64 Edition'
+                            : $arch =~ m{IA64}xmsi  ? 'Datacenter Edition Itanium'
                             :                         'unknown';
         }
     }
@@ -156,17 +156,17 @@ sub _2k_03_xp {
     elsif ( $mask & 0x00000400 ) {
         ${$osname_ref}  = 'Windows Server 2003';
         ${$edition_ref} = GetSystemMetrics(SM_SERVERR2) ? 'R2 Web Edition'
-                                                      : 'Web Edition';
+                                                        : 'Web Edition';
     }
     elsif ( $mask & 0x00004000) {
         ${$osname_ref}  = 'Windows Server 2003';
         ${$edition_ref} = GetSystemMetrics(SM_SERVERR2) ? 'R2 Compute Cluster Edition'
-                                                      : 'Compute Cluster Edition';
+                                                        : 'Compute Cluster Edition';
     }
     elsif ( $mask & 0x00002000) {
         ${$osname_ref}  = 'Windows Server 2003';
         ${$edition_ref} = GetSystemMetrics(SM_SERVERR2) ? 'R2 Storage'
-                                                      : 'Storage';
+                                                        : 'Storage';
     }
     elsif ($mask & 0x00000040 ) {
         ${$osname_ref}  = 'Windows XP';
@@ -247,8 +247,12 @@ None. Used internally.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.73> of C<Sys::Info::Driver::Windows::OS::Editions>
-released on C<14 January 2010>.
+This document describes version C<0.74_01> of C<Sys::Info::Driver::Windows::OS::Editions>
+released on C<24 March 2010>.
+
+B<WARNING>: This version of the module is part of a
+developer (beta) release of the distribution and it is
+not suitable for production use.
 
 Although there are not much Windows versions, there are ridiculously lots of
 editions of Windows versions after Windows 2000. This module uses C<WMI>,

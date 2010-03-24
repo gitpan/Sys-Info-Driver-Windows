@@ -7,7 +7,7 @@ use base                       qw( Sys::Info::Base );
 use constant LOAD_DIV    => 100;
 use constant VOLTAGE_DIV =>  10;
 
-our $VERSION = '0.73';
+our $VERSION = '0.74_01';
 
 my $WMI_INFO = {
     CpuStatus => {
@@ -337,8 +337,12 @@ Nothing public here.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.73> of C<Sys::Info::Driver::Windows::Device::CPU::WMI>
-released on C<14 January 2010>.
+This document describes version C<0.74_01> of C<Sys::Info::Driver::Windows::Device::CPU::WMI>
+released on C<24 March 2010>.
+
+B<WARNING>: This version of the module is part of a
+developer (beta) release of the distribution and it is
+not suitable for production use.
 
 WMI plugin.
 
