@@ -1,5 +1,6 @@
 ## no critic (ValuesAndExpressions::RequireNumberSeparators)
 # BEWARE: This module is mostly auto-generated!
+#    The source repository contains a template!
 package Sys::Info::Driver::Windows::Constants;
 use strict;
 use warnings;
@@ -71,7 +72,7 @@ use constant FT_UNKNOWN4 => 0x40000000;
 use constant FT_PEND_BRK_EN => 0x80000000;
 
 
-our $VERSION = '0.74_01';
+our $VERSION = '0.74_02';
 our @EXPORT;
 our @EXPORT_OK;
 our %EXPORT_TAGS;
@@ -164,8 +165,8 @@ Sys::Info::Driver::Windows::Constants - Constants
 
 =head1 DESCRIPTION
 
-This document describes version C<0.74_01> of C<Sys::Info::Driver::Windows::Constants>
-released on C<24 March 2010>.
+This document describes version C<0.74_02> of C<Sys::Info::Driver::Windows::Constants>
+released on C<2 May 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is

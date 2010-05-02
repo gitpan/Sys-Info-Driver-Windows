@@ -3,6 +3,7 @@ lib/Sys/Info/Driver/Windows/Constants.pm
 lib/Sys/Info/Driver/Windows/Device.pm
 lib/Sys/Info/Driver/Windows/Device/CPU.pm
 lib/Sys/Info/Driver/Windows/Device/CPU/WMI.pm
+lib/Sys/Info/Driver/Windows/Device/CPU/WMI/Conf.pm
 lib/Sys/Info/Driver/Windows/OS.pm
 lib/Sys/Info/Driver/Windows/OS/Editions.pm
 lib/Sys/Info/Driver/Windows/OS/Net.pm

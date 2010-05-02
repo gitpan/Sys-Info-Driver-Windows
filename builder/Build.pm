@@ -6,7 +6,7 @@ use constant TAINT_SHEBANG => "#!perl -Tw\nuse constant TAINTMODE => 1;\n";
 # since this is a builder we don't care about warnings.pm to support older perl
 ## no critic (RequireUseWarnings, InputOutput::RequireBriefOpen, InputOutput::ProhibitBacktickOperators)
 
-$VERSION = '0.63';
+$VERSION = '0.64';
 
 use File::Find;
 use File::Spec;
@@ -421,6 +421,7 @@ WriteMakefile(
     ($] >= 5.005 ? (
     AUTHOR       => $spec{dist_author},
     ABSTRACT     => $spec{ABSTRACT},
+    EXE_FILES    => $spec{EXE_FILES},
     ) : ()),
 );
 VANILLA_MAKEFILE_PL
