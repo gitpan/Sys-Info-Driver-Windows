@@ -2,8 +2,11 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
+0.74_03 Tue May  4 01:02:13 2010
+    => Fix a bootstrapping issue.
+
 0.74_02 Sun May  2 02:57:18 2010
-    => Split data structures into separate conf files.
+    => Move data structures into a separate conf.
     => Config::General is now a dependency.
 
 0.74_01 Wed Mar 24 18:56:52 2010

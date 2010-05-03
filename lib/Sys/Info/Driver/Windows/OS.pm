@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.74_02';
+our $VERSION = '0.74_03';
 
 ## no critic (ValuesAndExpressions::ProhibitMagicNumbers, ValuesAndExpressions::RequireNumberSeparators)
 
@@ -356,8 +356,8 @@ This is a private sub-class.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.74_02> of C<Sys::Info::Driver::Windows::OS>
-released on C<2 May 2010>.
+This document describes version C<0.74_03> of C<Sys::Info::Driver::Windows::OS>
+released on C<4 May 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is

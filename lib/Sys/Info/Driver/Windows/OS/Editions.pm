@@ -6,7 +6,7 @@ use Sys::Info::Driver::Windows qw( :metrics :WMI );
 ## no critic ( ValuesAndExpressions::ProhibitMagicNumbers    )
 ## no critic ( ValuesAndExpressions::RequireNumberSeparators )
 
-our $VERSION = '0.74_02';
+our $VERSION = '0.74_03';
 
 my %VISTA_EDITION = (
    0x00000006 => q{Business Edition},
@@ -41,9 +41,8 @@ my %SERVER08_EDITION = (
 
 sub _cpu_arch {
     my $self = shift;
-    require Sys::Info;
-    my $info = Sys::Info->new;
-    my $cpu  = $info->device( 'CPU' );
+    require Sys::Info::Device;
+    my $cpu = Sys::Info::Device->new( 'CPU' );
     foreach my $cpu ( $cpu->identify ) {
         # get the first available one
         return $cpu->{architecture} if $cpu->{architecture};
@@ -260,8 +259,8 @@ None. Used internally.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.74_02> of C<Sys::Info::Driver::Windows::OS::Editions>
-released on C<2 May 2010>.
+This document describes version C<0.74_03> of C<Sys::Info::Driver::Windows::OS::Editions>
+released on C<4 May 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is

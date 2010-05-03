@@ -5,7 +5,7 @@ use vars            qw( $VERSION @EXPORT %CONF );
 use base            qw( Exporter );
 use Config::General qw();
 
-$VERSION = '0.74_02';
+$VERSION = '0.74_03';
 @EXPORT  = qw( %CONF );
 
 %CONF = Config::General::ParseConfig( -String => <<'RAW' );
@@ -269,8 +269,8 @@ Sys::Info::Driver::Windows::Device::CPU::WMI::Conf - Distro configuration
 
 =head1 DESCRIPTION
 
-This document describes version C<0.74_02> of C<Sys::Info::Driver::Windows::Device::CPU::WMI::Conf>
-released on C<2 May 2010>.
+This document describes version C<0.74_03> of C<Sys::Info::Driver::Windows::Device::CPU::WMI::Conf>
+released on C<4 May 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is
