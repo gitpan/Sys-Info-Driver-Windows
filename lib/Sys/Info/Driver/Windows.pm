@@ -1,9 +1,6 @@
 package Sys::Info::Driver::Windows;
 use strict;
 use warnings;
-
-our $VERSION = '0.74_03';
-
 use base qw( Exporter );
 use Carp qw( croak    );
 use Sys::Info::Constants qw( WIN_B24_DIGITS );
@@ -40,7 +37,8 @@ BEGIN {
     }
 }
 
-our @EXPORT;
+our $VERSION = '0.74';
+our @EXPORT  = qw(  );
 our %EXPORT_TAGS = (
     metrics => [qw/
         GetSystemMetrics
@@ -49,10 +47,12 @@ our %EXPORT_TAGS = (
         SM_SERVERR2
         SM_STARTER
     /],
-    info => [ qw/ GetSystemInfo CPUFeatures / ],
-    WMI  => [ qw/ WMI WMI_FOR               / ],
-    etc  => [ qw/ decode_serial_key         / ],
-    reg  => [ qw/ registry                  / ],
+    info => [qw/
+        GetSystemInfo
+    /],
+    WMI => [qw/ WMI WMI_FOR /],
+    etc => [qw/decode_serial_key/],
+    reg => [ qw( registry ) ],
 );
 our @EXPORT_OK    = map { @{ $EXPORT_TAGS{$_} } } keys %EXPORT_TAGS;
 $EXPORT_TAGS{all} = \@EXPORT_OK;
@@ -120,19 +120,15 @@ Sys::Info::Driver::Windows - Windows driver for Sys::Info
 
 =head1 SYNOPSIS
 
-    use Sys::Info::Driver::Windows qw(:metrics);
+    use Sys::Info::Driver::Windows::XS qw(:metrics);
     if ( GetSystemMetrics(SM_SERVERR2) ) {
         # do something ...
     }
 
 =head1 DESCRIPTION
 
-This document describes version C<0.74_03> of C<Sys::Info::Driver::Windows>
-released on C<4 May 2010>.
-
-B<WARNING>: This version of the module is part of a
-developer (beta) release of the distribution and it is
-not suitable for production use.
+This document describes version C<0.74> of C<Sys::Info::Driver::Windows>
+released on C<25 May 2010>.
 
 This is the main module in the C<Windows> driver collection.
 
@@ -144,10 +140,6 @@ None.
 
 The following functions will be automatically exported when the module
 is used.
-
-=head2 CPUFeatures
-
-TODO
 
 =head2 registry
 

@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.74_03';
+our $VERSION = '0.74';
 
 ## no critic (ValuesAndExpressions::ProhibitMagicNumbers, ValuesAndExpressions::RequireNumberSeparators)
 
@@ -356,12 +356,8 @@ This is a private sub-class.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.74_03> of C<Sys::Info::Driver::Windows::OS>
-released on C<4 May 2010>.
-
-B<WARNING>: This version of the module is part of a
-developer (beta) release of the distribution and it is
-not suitable for production use.
+This document describes version C<0.74> of C<Sys::Info::Driver::Windows::OS>
+released on C<25 May 2010>.
 
 This document only discusses the driver specific parts.
 
@@ -424,15 +420,14 @@ version values and corresponding names are:
    2.5.1     Windows XP
    2.5.2     Windows Server 2003
    2.6.0     Windows Vista
-   2.6.0     Windows Server 2008(*)
-   2.6.1     Windows 7(**)
+   2.6.0     Windows Server 2008*
 
 It is also possible to get the short version (C<5.1> instead of C<2.5.1> for XP)
 if you pass the C<short> parameter with a true value:
 
     my $v = $os->version( short => 1 );
 
-(*) Unfortunately Windows Server 2008 has the same version number as Vista.
+* Unfortunately Windows Server 2008 has the same version number as Vista.
 One needs to check the L<name> method to differentiate:
 
     if ( $os->version eq '2.6.0' ) {
@@ -447,9 +442,6 @@ One needs to check the L<name> method to differentiate:
         print "Old Technology";
     }
 
-(**) Yes, that is correct. "Windows 7" is B<not> Windows version 7. It's the
-marketing name.
-
 =head1 SEE ALSO
 
 L<Win32>, L<Sys::Info>, L<Sys::Info::OS>,
@@ -457,6 +449,20 @@ L<http://www.codeguru.com/cpp/w-p/system/systeminformation/article.php/c8973>,
 L<http://msdn.microsoft.com/en-us/library/cc216469.aspx>,
 L<http://msdn.microsoft.com/en-us/library/ms724358(VS.85).aspx>
 .
+
+=head1 AUTHOR
+
+Burak Gürsoy, E<lt>burakE<64>cpan.orgE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2006-2009 Burak Gürsoy. All rights reserved.
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify 
+it under the same terms as Perl itself, either Perl version 5.10.0 or, 
+at your option, any later version of Perl 5 you may have available.
 
 =head1 AUTHOR
 
