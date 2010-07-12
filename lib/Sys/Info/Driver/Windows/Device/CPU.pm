@@ -11,7 +11,7 @@ use Sys::Info::Driver::Windows qw( :info :reg :WMI );
 use Carp                       qw( croak           );
 use Win32::OLE                 qw( in              );
 
-our $VERSION = '0.74';
+our $VERSION = '0.75_01';
 my $REG;
 $REG = registry()->{ +WIN_REG_CPU_KEY } if registry()->{ +WIN_REG_HW_KEY };
 
@@ -114,8 +114,12 @@ Sys::Info::Driver::Windows::Device::CPU - Windows CPU Device Driver
 
 =head1 DESCRIPTION
 
-This document describes version C<0.74> of C<Sys::Info::Driver::Windows::Device::CPU>
-released on C<25 May 2010>.
+This document describes version C<0.75_01> of C<Sys::Info::Driver::Windows::Device::CPU>
+released on C<12 July 2010>.
+
+B<WARNING>: This version of the module is part of a
+developer (beta) release of the distribution and it is
+not suitable for production use.
 
 Uses C<WMI>, C<Registry> and C<ENV> to identify the CPU.
 
@@ -149,7 +153,7 @@ Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.10.1 or, 
+it under the same terms as Perl itself, either Perl version 5.12.1 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut

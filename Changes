@@ -2,8 +2,21 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
-0.74 Tue May 25 03:16:22 2010
+0.75_01 Mon Jul 12 03:12:33 2010
+    => Disable bundled intrinsics for MinGW 4x.
+    => Capture::Tiny is now a prereq.
+    => Win32API::Net also added to prereqs for Strawberry.
+
+0.74_03 Tue May  4 01:02:13 2010
     => Fix a bootstrapping issue.
+
+0.74_02 Sun May  2 02:57:18 2010
+    => Move data structures into a separate conf.
+    => Config::General is now a dependency.
+
+0.74_01 Wed Mar 24 18:56:52 2010
+    => Improve CPU probe.
+    => Bundle intrin.h & friends from ReactOS for MinGW.
 
 0.73 Sun Jan 10 06:13:24 2010
     => Support new uname().
