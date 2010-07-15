@@ -3,10 +3,14 @@ use strict;
 use warnings;
 use Sys::Info::Driver::Windows qw( :metrics :WMI );
 
+use constant RE_X86   => qr{  X86}xmsi;
+use constant RE_AMD64 => qr{AMD64}xmsi;
+use constant RE_IA64  => qr{ IA64}xmsi;
+
 ## no critic ( ValuesAndExpressions::ProhibitMagicNumbers    )
 ## no critic ( ValuesAndExpressions::RequireNumberSeparators )
 
-our $VERSION = '0.75_01';
+our $VERSION = '0.75_02';
 
 my %VISTA_EDITION = (
    0x00000006 => q{Business Edition},
@@ -59,7 +63,7 @@ sub _xp_or_03 {
     my $mask   = $OSV->{RAW}{SUITEMASK};
     my $pt     = $OSV->{RAW}{PRODUCTTYPE};
     my $arch   = $self->_cpu_arch || q{};
-    my $metric = GetSystemMetrics(SM_SERVERR2);
+    my $metric = GetSystemMetrics( SM_SERVERR2 );
 
     ${$osname_ref} = 'Windows Server 2003';
 
@@ -74,15 +78,15 @@ sub _xp_or_03 {
 sub _xp_or_03_case1 {
     my($self, $metric, $arch, $edition_ref) = @_;
     if ( $metric ) {
-        ${$edition_ref} = $arch =~ m{  X86}xmsi ? 'R2 Datacenter Edition'
-                        : $arch =~ m{AMD64}xmsi ? 'R2 x64 Datacenter Edition'
-                        :                         'unknown';
+        ${$edition_ref} = $arch =~ RE_X86   ? 'R2 Datacenter Edition'
+                        : $arch =~ RE_AMD64 ? 'R2 x64 Datacenter Edition'
+                        :                     'unknown';
     }
     else {
-        ${$edition_ref} = $arch =~ m{  X86}xmsi ? 'Datacenter Edition'
-                        : $arch =~ m{AMD64}xmsi ? 'Datacenter x64 Edition'
-                        : $arch =~ m{ IA64}xmsi ? 'Datacenter Edition Itanium'
-                        :                         'unknown';
+        ${$edition_ref} = $arch =~ RE_X86   ? 'Datacenter Edition'
+                        : $arch =~ RE_AMD64 ? 'Datacenter x64 Edition'
+                        : $arch =~ RE_IA64  ? 'Datacenter Edition Itanium'
+                        :                     'unknown';
     }
     return;
 }
@@ -90,15 +94,15 @@ sub _xp_or_03_case1 {
 sub _xp_or_03_case2 {
     my($self, $metric, $arch, $edition_ref) = @_;
     if ( $metric ) {
-        ${$edition_ref} = $arch =~ m{  X86}xmsi ? 'R2 Enterprise Edition'
-                        : $arch =~ m{AMD64}xmsi ? 'R2 x64 Enterprise Edition'
-                        :                         'unknown';
+        ${$edition_ref} = $arch =~ RE_X86   ? 'R2 Enterprise Edition'
+                        : $arch =~ RE_AMD64 ? 'R2 x64 Enterprise Edition'
+                        :                     'unknown';
     }
     else {
-        ${$edition_ref} = $arch =~ m{  X86}xmsi ? 'Enterprise Edition'
-                        : $arch =~ m{AMD64}xmsi ? 'Enterprise x64 Edition'
-                        : $arch =~ m{ IA64}xmsi ? 'Enterprise Edition Itanium'
-                        :                         'unknown';
+        ${$edition_ref} = $arch =~ RE_X86   ? 'Enterprise Edition'
+                        : $arch =~ RE_AMD64 ? 'Enterprise x64 Edition'
+                        : $arch =~ RE_IA64  ? 'Enterprise Edition Itanium'
+                        :                     'unknown';
     }
     return;
 }
@@ -106,20 +110,20 @@ sub _xp_or_03_case2 {
 sub _xp_or_03_case3 {
     my($self, $metric, $arch, $edition_ref, $osname_ref, $pt) = @_;
     if ( $metric ) {
-        ${$edition_ref} = $arch =~ m{ X86}xmsi  ? 'R2 Standard Edition'
-                        : $arch =~ m{AMD64}xmsi ? 'R2 x64 Standard Edition'
-                        :                         'unknown';
+        ${$edition_ref} = $arch =~ RE_X86   ? 'R2 Standard Edition'
+                        : $arch =~ RE_AMD64 ? 'R2 x64 Standard Edition'
+                        :                     'unknown';
     }
     elsif ( $pt > 1 ) {
-        ${$edition_ref} = $arch =~ m{  X86}xmsi ? 'Standard Edition'
-                        : $arch =~ m{AMD64}xmsi ? 'Standard x64 Edition'
-                        :                         'unknown';
+        ${$edition_ref} = $arch =~ RE_X86   ? 'Standard Edition'
+                        : $arch =~ RE_AMD64 ? 'Standard x64 Edition'
+                        :                     'unknown';
     }
     elsif ( $pt == 1 ) {
         ${$osname_ref}  = 'Windows XP';
-        ${$edition_ref} = $arch =~ m{ IA64}xmsi ? '64 bit Edition Version 2003'
-                        : $arch =~ m{AMD64}xmsi ? 'Professional x64 Edition'
-                        :                         'unknown';
+        ${$edition_ref} = $arch =~ RE_IA64  ? '64 bit Edition Version 2003'
+                        : $arch =~ RE_AMD64 ? 'Professional x64 Edition'
+                        :                     'unknown';
     }
     else {
         ${$edition_ref} = 'unknown';
@@ -138,8 +142,8 @@ sub _xp_editions {
     ${$edition_ref} = GetSystemMetrics(SM_TABLETPC)    ? 'Tablet PC Edition'
                     : GetSystemMetrics(SM_MEDIACENTER) ? 'Media Center Edition'
                     : GetSystemMetrics(SM_STARTER)     ? 'Starter Edition'
-                    : $arch =~ m{ x86}xmsi             ? 'Professional'
-                    : $arch =~ m{IA64}xmsi             ? '64-bit Edition for Itanium systems'
+                    : $arch =~ RE_X86                  ? 'Professional'
+                    : $arch =~ RE_IA64                 ? '64-bit Edition for Itanium systems'
                     :                                    q{};
     return;
 }
@@ -237,7 +241,7 @@ sub _win7 {
         ${$edition_ref} = $win7;
     }
     else {
-        (my $caption = $item->Caption) =~ s{.+?Windows \s 7\s?}{}xms;
+        (my $caption = $item->Caption) =~ s{ .+? Windows \s 7 \s? }{}xms;
         ${$edition_ref} = $self->trim($caption) if $caption;
     }
     return;
@@ -259,8 +263,8 @@ None. Used internally.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.75_01> of C<Sys::Info::Driver::Windows::OS::Editions>
-released on C<12 July 2010>.
+This document describes version C<0.75_02> of C<Sys::Info::Driver::Windows::OS::Editions>
+released on C<16 July 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is

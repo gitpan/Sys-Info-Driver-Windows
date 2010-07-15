@@ -2,6 +2,9 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
+0.75_02 Fri Jul 16 01:55:08 2010
+    => Set CPU flags.
+
 0.75_01 Mon Jul 12 03:12:33 2010
     => Disable bundled intrinsics for MinGW 4x.
     => Capture::Tiny is now a prereq.

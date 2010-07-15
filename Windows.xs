@@ -402,7 +402,7 @@ PPCODE:
     PUSHs( sv_2mortal( newSVpv( "____ecx"               , 0 ) ) );
     PUSHs( sv_2mortal( newSVuv( ecx                         ) ) );
 
-    PUSHs( sv_2mortal( newSVpv( "____CpuFeatures"       , 0 ) ) );
+    PUSHs( sv_2mortal( newSVpv( "CpuFeatures"           , 0 ) ) );
     PUSHs( sv_2mortal( newSVuv( CpuFeatures                 ) ) );
 
     PUSHs( sv_2mortal( newSVpv( "SteppingID"            , 0 ) ) );

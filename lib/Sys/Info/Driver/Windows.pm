@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows;
 use strict;
 use warnings;
 
-our $VERSION = '0.75_01';
+our $VERSION = '0.75_02';
 
 use base qw( Exporter );
 use Carp qw( croak    );
@@ -13,10 +13,7 @@ use constant SM_TABLETPC    => 86; # Windows XP Tablet PC edition
 use constant SM_MEDIACENTER => 87; # Windows XP, Media Center Edition
 use constant SM_STARTER     => 88; # Windows XP Starter Edition
 use constant SM_SERVERR2    => 89; # Windows Server 2003 R2
-
 use constant SERIAL_BASE    => 24;
-
-# Win32::SystemInfo::CpuUsage ???
 
 use XSLoader;
 
@@ -34,9 +31,10 @@ BEGIN {
         );
         1;
     };
+
     if ( $@ || ! $eok ) {
         my $error = $@ || '<unknown error>';
-        croak "Error loading Win32::TieRegistry-: $error";
+        croak "Error loading Win32::TieRegistry: $error";
     }
 }
 
@@ -127,8 +125,8 @@ Sys::Info::Driver::Windows - Windows driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.75_01> of C<Sys::Info::Driver::Windows>
-released on C<12 July 2010>.
+This document describes version C<0.75_02> of C<Sys::Info::Driver::Windows>
+released on C<16 July 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is

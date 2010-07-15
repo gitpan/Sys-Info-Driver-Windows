@@ -7,11 +7,12 @@ use base qw(
     Sys::Info::Driver::Windows::Device::CPU::WMI
 );
 use Sys::Info::Constants       qw( :windows_reg    );
-use Sys::Info::Driver::Windows qw( :info :reg :WMI );
+use Sys::Info::Driver::Windows::Constants;
+use Sys::Info::Driver::Windows qw( :info :reg :WMI CPUFeatures );
 use Carp                       qw( croak           );
 use Win32::OLE                 qw( in              );
 
-our $VERSION = '0.75_01';
+our $VERSION = '0.75_02';
 my $REG;
 $REG = registry()->{ +WIN_REG_CPU_KEY } if registry()->{ +WIN_REG_HW_KEY };
 
@@ -50,12 +51,55 @@ sub identify {
                     or $self->_from_registry
                     or $self->SUPER::identify(@_)
                     or croak('Failed to identify CPU');
+        $self->_set_flags( \@cache );
         $self->{META_DATA} = [ @cache ];
     }
     return $self->_serve_from_cache(wantarray);
 }
 
 # ------------------------[ P R I V A T E ]------------------------ #
+
+sub _set_flags {
+    my($self, $cpu) = @_;
+
+    my %feat = CPUFeatures();
+    my $c    = 'Sys::Info::Driver::Windows::Constants';
+
+    my $get_symbols = sub {
+        # fetch the related constants
+        my $regex = shift || die "Regex missing\n";
+        no strict qw( refs );
+        return grep { $_ =~ $regex } keys %{ $c . q{::} };
+    };
+
+    my $cf = $feat{CpuFeatures};
+    my $f  = $feat{Flags};
+    my $k  = $feat{KFBits};
+    my $ff = $feat{FeatureFlags};
+    my @flags;
+
+    foreach my $flag ( $get_symbols->( qr{ \A CF_ }xms ) ){
+        push @flags, $flag if $f & $c->$flag();
+    }
+
+    foreach my $flag ( $get_symbols->( qr{ \A KF_ }xms ) ){
+        push @flags, $flag if $k & $c->$flag();
+    }
+
+    foreach my $flag ( $get_symbols->( qr{ \A FT_ }xms ) ){
+        push @flags, $flag if $ff & $c->$flag();
+    }
+
+    foreach my $e ( @flags ) {
+        $e =~ s{ \A (?: CF|KF|FT )_ }{}xms;
+    }
+
+    my %fbuf = map { lc $_ => 1 } @flags;
+    @flags = sort keys %fbuf;
+
+    $cpu->[$_]{flags} = [ @flags ] for 0..$#{$cpu};
+    return;
+}
 
 # $REG->{'0/FeatureSet'}
 # $REG->{'0/Update Status'}
@@ -114,8 +158,8 @@ Sys::Info::Driver::Windows::Device::CPU - Windows CPU Device Driver
 
 =head1 DESCRIPTION
 
-This document describes version C<0.75_01> of C<Sys::Info::Driver::Windows::Device::CPU>
-released on C<12 July 2010>.
+This document describes version C<0.75_02> of C<Sys::Info::Driver::Windows::Device::CPU>
+released on C<16 July 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is

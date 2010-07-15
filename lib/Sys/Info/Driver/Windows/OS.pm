@@ -2,9 +2,10 @@ package Sys::Info::Driver::Windows::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.75_01';
+our $VERSION = '0.75_02';
 
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers, ValuesAndExpressions::RequireNumberSeparators)
+## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
+## no critic (ValuesAndExpressions::RequireNumberSeparators)
 
 use constant LAST_ELEMENT => -1;
 use constant MILISECOND   => 1000;
@@ -23,12 +24,16 @@ my @OSV_NAMES = qw/
     SPMAJOR SPMINOR SUITEMASK PRODUCTTYPE
 /;
 
-my %OSVERSION;  # see _populate_osversion
-my %FILESYSTEM; # see _populate_fs
-
 BEGIN {
-    *is_win9x = *is_win95 = sub{ Win32::IsWin95() } if not defined &is_win9x;
-    *is_winnt             = sub{ Win32::IsWinNT() } if not defined &is_winnt;
+    *is_win9x = *is_win95 = sub{ Win32::IsWin95() } if ! defined &is_win9x;
+    *is_winnt             = sub{ Win32::IsWinNT() } if ! defined &is_winnt;
+}
+
+sub init {
+    my $self = shift;
+    $self->{OSVERSION}  = undef; # see _populate_osversion
+    $self->{FILESYSTEM} = undef; # see _populate_fs
+    return;
 }
 
 sub is_root {
@@ -42,37 +47,32 @@ sub is_root {
 sub node_name { return Win32::NodeName() }
 
 sub edition {
-    my $self = shift->_populate_osversion;
-    return $OSVERSION{RAW}->{EDITION};
+    return shift->_populate_osversion->{OSVERSION}{RAW}{EDITION};
 }
 
 sub product_type {
     my($self, @args) = @_;
     $self->_populate_osversion;
     my %opt  = @args % 2 ? () : @args;
-    my $raw  = $OSVERSION{RAW}->{PRODUCTTYPE};
-    return $raw if $opt{raw};
-    return $self->_product_type( $raw );
+    my $raw  = $self->{OSVERSION}{RAW}{PRODUCTTYPE};
+    return $opt{raw} ? $raw : $self->_product_type( $raw );
 }
 
 sub name {
     my($self, @args) = @_;
     $self->_populate_osversion;
-    my %opt  = @args % 2 ? () : @args;
-    my $id   = $opt{long} ? ($opt{edition} ? 'LONGNAME_EDITION' : 'LONGNAME')
-             :              ($opt{edition} ? 'NAME_EDITION'     : 'NAME'    )
-             ;
-    return $OSVERSION{ $id };
+    my %opt  = @args % 2  ? ()         : @args;
+    my $id   = $opt{long} ? 'LONGNAME' : 'NAME';
+    return $self->{OSVERSION}{ $opt{edition} ? $id . '_EDITION' : $id };
 }
 
 sub version {
     my($self, @args) = @_;
-    $self->_populate_osversion;
     my %opt     = @args % 2 ? () : @args;
-    my $version = $OSVERSION{VERSION};
+    my $version = $self->_populate_osversion->{OSVERSION}{VERSION};
 
     if ( $opt{short} ) {
-        my @v = split /[.]/xms, $version;
+        my @v = split m{[.]}xms, $version;
         shift @v;
         return join q{.}, @v ;
     }
@@ -81,8 +81,7 @@ sub version {
 }
 
 sub build {
-    my $self = shift->_populate_osversion;
-    return $OSVERSION{RAW}->{BUILD} || 0;
+    return shift->_populate_osversion->{OSVERSION}{RAW}{BUILD} || 0;
 }
 
 sub uptime {
@@ -120,8 +119,7 @@ sub logon_server {
 
 sub fs {
     my $self = shift;
-    $self->_populate_fs();
-    return %FILESYSTEM;
+    return %{ $self->_populate_fs->{FILESYSTEM} };
 }
 
 sub tz {
@@ -218,26 +216,26 @@ sub _wmidate_to_unix {
 }
 
 sub _populate_fs {
-    return if %FILESYSTEM;
     my $self  = shift;
+    return $self if $self->{FILESYSTEM};
     my($FSTYPE, $FLAGS, $MAXCOMPLEN) = Win32::FsType();
     if ( !$FSTYPE && Win32::GetLastError() ) {
         warn "Can not fetch file system information: $^E\n";
         return;
     }
     my %flag = (
-        case_sensitive     => 0x00000001,  #'supports case-sensitive filenames',
-        preserve_case      => 0x00000002,  #'preserves the case of filenames',
-        unicode            => 0x00000004,  #'supports Unicode in filenames',
-        acl                => 0x00000008,  #'preserves and enforces ACLs',
-        file_compression   => 0x00000010,  #'supports file-based compression',
-        disk_quotas        => 0x00000020,  #'supports disk quotas',
-        sparse             => 0x00000040,  #'supports sparse files',
-        reparse            => 0x00000080,  #'supports reparse points',
-        remote_storage     => 0x00000100,  #'supports remote storage',
-        compressed_volume  => 0x00008000,  #'is a compressed volume (e.g. DoubleSpace)',
-        object_identifiers => 0x00010000,  #'supports object identifiers',
-        efs                => 0x00020000,  #'supports the Encrypted File System (EFS)',
+        case_sensitive     => 0x00000001, #supports case-sensitive filenames
+        preserve_case      => 0x00000002, #preserves the case of filenames
+        unicode            => 0x00000004, #supports Unicode in filenames
+        acl                => 0x00000008, #preserves and enforces ACLs
+        file_compression   => 0x00000010, #supports file-based compression
+        disk_quotas        => 0x00000020, #supports disk quotas
+        sparse             => 0x00000040, #supports sparse files
+        reparse            => 0x00000080, #supports reparse points
+        remote_storage     => 0x00000100, #supports remote storage
+        compressed_volume  => 0x00008000, #is a compressed volume (e.g. DoubleSpace)
+        object_identifiers => 0x00010000, #supports object identifiers
+        efs                => 0x00020000, #supports the Encrypted File System (EFS)
     );
     my @fl;
     if ( $FLAGS ) {
@@ -245,10 +243,12 @@ sub _populate_fs {
             push @fl, $f => $flag{$f} & $FLAGS ? 1 : 0;
         }
     }
+
     push @fl, max_file_length => $MAXCOMPLEN if $MAXCOMPLEN;
     push @fl, filesystem      => $FSTYPE     if $FSTYPE; # NTFS/FAT/FAT32
-    %FILESYSTEM = (@fl);
-    return;
+
+    $self->{FILESYSTEM} = { @fl };
+    return $self;
 }
 
 sub _osversion_table {
@@ -290,7 +290,7 @@ sub _osversion_table {
 
 sub _populate_osversion { # returns the object
     my $self = shift;
-    return $self if %OSVERSION; # build once use everywhere :p
+    return $self if $self->{OSVERSION};
     # Win32::GetOSName() is not reliable.
     # Since, an older release will not have any idea about XP or Vista
     # Server 2008 is tricky since it has the same version number as Vista
@@ -302,7 +302,7 @@ sub _populate_osversion { # returns the object
 
     my($osname, $version, $edition) = $self->_osversion_table( \%OSV );
 
-    %OSVERSION = (
+    $self->{OSVERSION} = {
         NAME             => $osname,
         NAME_EDITION     => $edition ? "$osname $edition" : $osname,
         LONGNAME         => q{}, # will be set below
@@ -320,13 +320,14 @@ sub _populate_osversion { # returns the object
             EDITION     => $edition,
             SUITEMASK   => $OSV{SUITEMASK},
         },
-    );
+    };
 
-    my $build  = q{};
-       $build .= "build $OSVERSION{RAW}->{BUILD}" if $OSVERSION{RAW}->{BUILD};
-    my $string = $OSVERSION{RAW}->{STRING};
-    $OSVERSION{LONGNAME}         = join q{ }, $OSVERSION{NAME}, $string, $build;
-    $OSVERSION{LONGNAME_EDITION} = join q{ }, $OSVERSION{NAME_EDITION}, $string, $build;
+    my $o      = $self->{OSVERSION};
+    my $build  = $o->{RAW}{BUILD} ? 'build ' . $o->{RAW}{BUILD} : q{};
+    my $string = $o->{RAW}{STRING};
+
+    $o->{LONGNAME}         = join q{ }, $o->{NAME},         $string, $build;
+    $o->{LONGNAME_EDITION} = join q{ }, $o->{NAME_EDITION}, $string, $build;
 
     return $self;
 }
@@ -356,8 +357,8 @@ This is a private sub-class.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.75_01> of C<Sys::Info::Driver::Windows::OS>
-released on C<12 July 2010>.
+This document describes version C<0.75_02> of C<Sys::Info::Driver::Windows::OS>
+released on C<16 July 2010>.
 
 B<WARNING>: This version of the module is part of a
 developer (beta) release of the distribution and it is
@@ -378,6 +379,8 @@ This document only discusses the driver specific parts.
 =head2 edition
 
 =head2 fs
+
+=head2 init
 
 =head2 is_win95
 
