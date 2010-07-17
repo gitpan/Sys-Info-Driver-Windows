@@ -2,6 +2,9 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
+0.76 Sun Jul 18 02:24:09 2010
+    => Bump version for new stable release.
+
 0.75_02 Fri Jul 16 01:55:08 2010
     => Set CPU flags.
 

@@ -23,31 +23,31 @@ no_index:
 provides:
   Sys::Info::Driver::Windows:
     file: lib/Sys/Info/Driver/Windows.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::Constants:
     file: lib/Sys/Info/Driver/Windows/Constants.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::Device:
     file: lib/Sys/Info/Driver/Windows/Device.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::Device::CPU:
     file: lib/Sys/Info/Driver/Windows/Device/CPU.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::Device::CPU::WMI:
     file: lib/Sys/Info/Driver/Windows/Device/CPU/WMI.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::Device::CPU::WMI::Conf:
     file: lib/Sys/Info/Driver/Windows/Device/CPU/WMI/Conf.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::OS:
     file: lib/Sys/Info/Driver/Windows/OS.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::OS::Editions:
     file: lib/Sys/Info/Driver/Windows/OS/Editions.pm
-    version: 0.75_02
+    version: 0.76
   Sys::Info::Driver::Windows::OS::Net:
     file: lib/Sys/Info/Driver/Windows/OS/Net.pm
-    version: 0.75_02
+    version: 0.76
 requires:
   Config::General: 0
   ExtUtils::CBuilder: 0
@@ -59,4 +59,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://bitbucket.org/burak/cpan-sys-info-driver-windows/
-version: 0.75_02
+version: 0.76

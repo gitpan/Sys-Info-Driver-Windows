@@ -72,7 +72,7 @@ use constant FT_UNKNOWN4 => 0x40000000;
 use constant FT_PEND_BRK_EN => 0x80000000;
 
 
-our $VERSION = '0.75_02';
+our $VERSION = '0.76';
 our @EXPORT;
 our @EXPORT_OK;
 our %EXPORT_TAGS;
@@ -165,12 +165,8 @@ Sys::Info::Driver::Windows::Constants - Constants
 
 =head1 DESCRIPTION
 
-This document describes version C<0.75_02> of C<Sys::Info::Driver::Windows::Constants>
-released on C<16 July 2010>.
-
-B<WARNING>: This version of the module is part of a
-developer (beta) release of the distribution and it is
-not suitable for production use.
+This document describes version C<0.76> of C<Sys::Info::Driver::Windows::Constants>
+released on C<18 July 2010>.
 
 -
 

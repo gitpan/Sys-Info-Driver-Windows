@@ -4,7 +4,7 @@ use warnings;
 use Win32;
 use Sys::Info::Constants qw( WIN_USER_INFO_LEVEL );
 
-our $VERSION = '0.75_02';
+our $VERSION = '0.76';
 
 BEGIN {
     if ( ! Win32::IsWin95() ) {
@@ -59,12 +59,8 @@ Sys::Info::Driver::Windows::OS::Net - A minimal interface to Win32API::Net
 
 =head1 DESCRIPTION
 
-This document describes version C<0.75_02> of C<Sys::Info::Driver::Windows::OS::Net>
-released on C<16 July 2010>.
-
-B<WARNING>: This version of the module is part of a
-developer (beta) release of the distribution and it is
-not suitable for production use.
+This document describes version C<0.76> of C<Sys::Info::Driver::Windows::OS::Net>
+released on C<18 July 2010>.
 
 A minimal interface to Win32API::Net. If you're under Win9x, all methods
 will return C<undef>.
