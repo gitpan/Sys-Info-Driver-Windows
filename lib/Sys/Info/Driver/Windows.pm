@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows;
 use strict;
 use warnings;
 
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 use base qw( Exporter );
 use Carp qw( croak    );
@@ -125,8 +125,8 @@ Sys::Info::Driver::Windows - Windows driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.76> of C<Sys::Info::Driver::Windows>
-released on C<18 July 2010>.
+This document describes version C<0.77> of C<Sys::Info::Driver::Windows>
+released on C<5 August 2010>.
 
 This is the main module in the C<Windows> driver collection.
 

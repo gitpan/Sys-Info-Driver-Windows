@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows::Device;
 use strict;
 use warnings;
 
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 1;
 
@@ -20,8 +20,8 @@ Sys::Info::Driver::Windows::Device - Base class for Windows device drivers
 
 =head1 DESCRIPTION
 
-This document describes version C<0.76> of C<Sys::Info::Driver::Windows::Device>
-released on C<18 July 2010>.
+This document describes version C<0.77> of C<Sys::Info::Driver::Windows::Device>
+released on C<5 August 2010>.
 
 Base class for Windows device drivers.
 

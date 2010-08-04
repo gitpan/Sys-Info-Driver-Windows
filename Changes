@@ -2,6 +2,9 @@ Revision history for Perl extension Sys::Info::Driver::Windows.
 
 Time zone is GMT+2.
 
+0.77 Thu Aug  5 00:09:07 2010
+    => Bundle Capture::Tiny, as it's used too early to be a PREREQ.
+
 0.76 Sun Jul 18 02:24:09 2010
     => Bump version for new stable release.
 

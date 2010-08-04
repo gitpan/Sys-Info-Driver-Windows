@@ -10,7 +10,7 @@ use constant RE_IA64  => qr{ IA64}xmsi;
 ## no critic ( ValuesAndExpressions::ProhibitMagicNumbers    )
 ## no critic ( ValuesAndExpressions::RequireNumberSeparators )
 
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 my %VISTA_EDITION = (
    0x00000006 => q{Business Edition},
@@ -263,8 +263,8 @@ None. Used internally.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.76> of C<Sys::Info::Driver::Windows::OS::Editions>
-released on C<18 July 2010>.
+This document describes version C<0.77> of C<Sys::Info::Driver::Windows::OS::Editions>
+released on C<5 August 2010>.
 
 Although there are not much Windows versions, there are ridiculously lots of
 editions of Windows versions after Windows 2000. This module uses C<WMI>,

@@ -8,7 +8,7 @@ use Win32::OLE                 qw( in              );
 use Sys::Info::Driver::Windows qw( :WMI            );
 use Sys::Info::Driver::Windows::Device::CPU::WMI::Conf;
 
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 my $WMI_INFO           = $CONF{info};
 my %RENAME             = %{ $CONF{rename}{cpu}          };
@@ -100,8 +100,8 @@ Nothing public here.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.76> of C<Sys::Info::Driver::Windows::Device::CPU::WMI>
-released on C<18 July 2010>.
+This document describes version C<0.77> of C<Sys::Info::Driver::Windows::Device::CPU::WMI>
+released on C<5 August 2010>.
 
 WMI plugin.
 

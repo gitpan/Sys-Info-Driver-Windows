@@ -12,7 +12,7 @@ use Sys::Info::Driver::Windows qw( :info :reg :WMI CPUFeatures );
 use Carp                       qw( croak           );
 use Win32::OLE                 qw( in              );
 
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 my $REG;
 $REG = registry()->{ +WIN_REG_CPU_KEY } if registry()->{ +WIN_REG_HW_KEY };
 
@@ -158,8 +158,8 @@ Sys::Info::Driver::Windows::Device::CPU - Windows CPU Device Driver
 
 =head1 DESCRIPTION
 
-This document describes version C<0.76> of C<Sys::Info::Driver::Windows::Device::CPU>
-released on C<18 July 2010>.
+This document describes version C<0.77> of C<Sys::Info::Driver::Windows::Device::CPU>
+released on C<5 August 2010>.
 
 Uses C<WMI>, C<Registry> and C<ENV> to identify the CPU.
 
