@@ -6,8 +6,8 @@ die "OS unsupported\n" if $^O !~ m{ \A MSWin }xmsi;
 {
     module_name    => 'Sys::Info::Driver::Windows',
     requires       => {
-        'Sys::Info::Base'            => '0.73',
-        'Sys::Info::Driver::Unknown' => '0.73',
+        'Sys::Info::Base'            => '0.78',
+        'Sys::Info::Driver::Unknown' => '0.78',
         'ExtUtils::CBuilder'         => 0,
         'Win32::OLE'                 => 0,
         'Win32::TieRegistry'         => 0,

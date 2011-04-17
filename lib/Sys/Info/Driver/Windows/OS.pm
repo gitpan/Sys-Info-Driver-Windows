@@ -2,7 +2,7 @@ package Sys::Info::Driver::Windows::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.77';
+our $VERSION = '0.78';
 
 ## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 ## no critic (ValuesAndExpressions::RequireNumberSeparators)
@@ -357,8 +357,8 @@ This is a private sub-class.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.77> of C<Sys::Info::Driver::Windows::OS>
-released on C<5 August 2010>.
+This document describes version C<0.78> of C<Sys::Info::Driver::Windows::OS>
+released on C<17 April 2011>.
 
 This document only discusses the driver specific parts.
 
@@ -463,12 +463,12 @@ Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
+Copyright 2006 - 2011 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.12.1 or, 
+it under the same terms as Perl itself, either Perl version 5.12.2 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut

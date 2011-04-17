@@ -10,7 +10,7 @@ use constant RE_IA64  => qr{ IA64}xmsi;
 ## no critic ( ValuesAndExpressions::ProhibitMagicNumbers    )
 ## no critic ( ValuesAndExpressions::RequireNumberSeparators )
 
-our $VERSION = '0.77';
+our $VERSION = '0.78';
 
 my %VISTA_EDITION = (
    0x00000006 => q{Business Edition},
@@ -263,8 +263,8 @@ None. Used internally.
 
 =head1 DESCRIPTION
 
-This document describes version C<0.77> of C<Sys::Info::Driver::Windows::OS::Editions>
-released on C<5 August 2010>.
+This document describes version C<0.78> of C<Sys::Info::Driver::Windows::OS::Editions>
+released on C<17 April 2011>.
 
 Although there are not much Windows versions, there are ridiculously lots of
 editions of Windows versions after Windows 2000. This module uses C<WMI>,
@@ -283,12 +283,12 @@ Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
+Copyright 2006 - 2011 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.12.1 or, 
+it under the same terms as Perl itself, either Perl version 5.12.2 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut

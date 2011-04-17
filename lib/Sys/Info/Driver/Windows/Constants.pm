@@ -72,7 +72,7 @@ use constant FT_UNKNOWN4 => 0x40000000;
 use constant FT_PEND_BRK_EN => 0x80000000;
 
 
-our $VERSION = '0.77';
+our $VERSION = '0.78';
 our @EXPORT;
 our @EXPORT_OK;
 our %EXPORT_TAGS;
@@ -165,8 +165,8 @@ Sys::Info::Driver::Windows::Constants - Constants
 
 =head1 DESCRIPTION
 
-This document describes version C<0.77> of C<Sys::Info::Driver::Windows::Constants>
-released on C<5 August 2010>.
+This document describes version C<0.78> of C<Sys::Info::Driver::Windows::Constants>
+released on C<17 April 2011>.
 
 -
 
@@ -315,12 +315,12 @@ Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2006 - 2010 Burak Gursoy. All rights reserved.
+Copyright 2006 - 2011 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.12.1 or, 
+it under the same terms as Perl itself, either Perl version 5.12.2 or, 
 at your option, any later version of Perl 5 you may have available.
 
 =cut
